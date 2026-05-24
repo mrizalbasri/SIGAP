@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SIGAP Command Center - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3131",
+                        "outline-variant": "#dac2af",
+                        "on-background": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "surface-container-low": "#f3f3f3",
+                        "tertiary": "#5f5e5e",
+                        "on-error": "#ffffff",
+                        "green-light": "#e8f8f3",
+                        "surface-tint": "#8b5000",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-primary": "#ffb870",
+                        "surface-bright": "#f9f9f9",
+                        "primary": "#8b5000",
+                        "on-primary-fixed": "#2c1600",
+                        "on-tertiary": "#ffffff",
+                        "glass-surface": "rgba(255, 255, 255, 0.7)",
+                        "primary-fixed-dim": "#ffb870",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#693c00",
+                        "status-violation": "#ef4444",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#005138",
+                        "on-secondary-fixed": "#002114",
+                        "status-offline": "#9ca3af",
+                        "background": "#f9f9f9",
+                        "secondary-fixed-dim": "#63dcaa",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#f59827",
+                        "primary-fixed": "#ffdcbe",
+                        "on-secondary-container": "#00714f",
+                        "secondary-container": "#7ef6c2",
+                        "on-tertiary-container": "#424141",
+                        "on-primary-container": "#613700",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "orange-light": "#fff3e0",
+                        "secondary-fixed": "#81f9c5",
+                        "on-surface-variant": "#544435",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1a1c1c",
+                        "outline": "#877463",
+                        "surface-dim": "#dadada",
+                        "tertiary-container": "#afadad",
+                        "secondary": "#006c4c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin-desktop": "32px",
+                        "base": "8px",
+                        "sidebar-width": "280px",
+                        "gutter": "24px",
+                        "container-margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "label-md": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-glass-surface backdrop-blur-xl border-r border-outline-variant shadow-sm w-[280px] h-screen fixed left-0 top-0 flex-col py-base z-50">
+<div class="px-6 py-4 flex items-center space-x-3 mb-6">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined font-bold">local_shipping</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">SIGAP</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Sistem Integrasi Gerak Armada Pintar</p>
+</div>
+</div>
+<ul class="flex-1 space-y-1 px-3">
+<li>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-primary border-r-4 border-primary bg-primary-container/20 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-weight="fill">dashboard</span>
+<span class="font-title-lg text-title-lg">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-title-lg text-title-lg">Live Map</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-title-lg text-title-lg">Fleet Management</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-title-lg text-title-lg">Alert Logs</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-title-lg text-title-lg">Analytics</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-3 py-4 border-t border-outline-variant">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center space-x-3 px-4 py-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-4 py-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all duration-300" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-[280px] flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-glass-surface backdrop-blur-md border-b border-outline-variant shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-280px)] h-16 z-40 flex items-center justify-between px-gutter">
+<div class="flex items-center gap-4">
+<!-- Mobile menu toggle placeholder -->
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Command Center</h2>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="relative hidden sm:block focus-within:ring-2 focus-within:ring-primary/50 rounded-full bg-surface-container px-4 py-2 flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none outline-none font-body-md text-on-surface placeholder-on-surface-variant w-48" placeholder="Search fleets, areas..." type="text"/>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary cursor-pointer transition-colors relative">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary cursor-pointer transition-colors relative">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-status-violation rounded-full"></span>
+</button>
+<!-- Profile -->
+<div class="w-8 h-8 rounded-full bg-primary-container overflow-hidden border border-outline-variant cursor-pointer">
+<img alt="Dispatcher Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a dispatcher in a command center environment. Soft, modern lighting highlighting a focused expression. The background is slightly blurred showing digital dashboard screens in an office setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNWJ0RB_QF500aeSJQQmK9uV0rlws4yG3Xtd-CFXf6oiXg-yQq9ycplGUbGXtEAiS1mHXF6OjjOgZUmvibU3n7zSXtFS_lpLQMiilDh4DyBnDXjdWaVVFxzcSUXltWBwsa9Y7JviQ7sh1bQa9BF6OQedZxHc6L7VIVw13zYHLZZ5eY1_y7yjHOdXBLy-yS8Q5c2bInFNto92MZHWlF1F6wBS5brCmjm79wi5w4fqlZ--Lt8w69lOWyUG-GeXzsCAghHpJ6kYTbHGs"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 pt-20 px-container-margin-mobile md:px-container-margin-desktop pb-8 flex flex-col gap-6 w-full max-w-[1600px] mx-auto">
+<!-- Row 1: KPI Cards -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Total Fleet -->
+<div class="glass-panel rounded-xl p-5 border-t-4 border-primary-container flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface-variant">Total Fleet</h3>
+<div class="p-2 bg-primary-container/10 rounded-lg text-primary-container">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">1,248</span>
+<span class="font-label-md text-label-md text-secondary">+12 today</span>
+</div>
+</div>
+<!-- On Route -->
+<div class="glass-panel rounded-xl p-5 border-t-4 border-secondary-container flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface-variant">On Route</h3>
+<div class="p-2 bg-secondary-container/10 rounded-lg text-secondary">
+<span class="material-symbols-outlined">route</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">892</span>
+<span class="font-label-md text-label-md text-on-surface-variant">71% Active</span>
+</div>
+</div>
+<!-- Violations -->
+<div class="glass-panel rounded-xl p-5 border-t-4 border-status-violation flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface-variant">Violations</h3>
+<div class="p-2 bg-error-container rounded-lg text-status-violation">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">24</span>
+<span class="font-label-md text-label-md text-status-violation">Needs Attention</span>
+</div>
+</div>
+<!-- Idle -->
+<div class="glass-panel rounded-xl p-5 border-t-4 border-primary-container flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-lg text-title-lg text-on-surface-variant">Idle / Maintenance</h3>
+<div class="p-2 bg-surface-variant rounded-lg text-tertiary">
+<span class="material-symbols-outlined">build</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">332</span>
+<span class="font-label-md text-label-md text-on-surface-variant">26% Offline</span>
+</div>
+</div>
+</section>
+<!-- Row 2: Map & Alerts -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
+<!-- Large Map -->
+<div class="lg:col-span-2 glass-panel rounded-xl overflow-hidden flex flex-col relative">
+<div class="absolute top-4 left-4 z-10 glass-panel px-4 py-2 rounded-lg flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary pulse-dot"></div>
+<span class="font-label-md text-label-md font-bold text-on-surface">DKI Jakarta - Live Tracking</span>
+</div>
+<!-- Map Placeholder -->
+<div class="w-full h-full bg-surface-container relative" data-alt="A stylized, modern high-contrast digital map view of Jakarta city. The map features a clean, light-mode aesthetic with subtle white and light gray tones for terrain and roads. Bright orange and vibrant green geometric markers indicate active fleet locations across the urban grid. The overall mood is high-tech, precise, and analytical, suitable for a sophisticated command center dashboard." data-location="Jakarta" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC0e7Vymd5ovGuxja0ltKpJRKaXc4WhDZMgQNP9m_GuOepKAxyPexbUMlolkpIRP1WQbUCsQltOXvwdgtbzcxdNaMA4THpxVy6sJ7U7VE7bFK6KNh_PVYd-VrSD1Ve9AASjd0K15DXPn1T9XLBmBCTpG5S-txCnvOtlxnDFWPUadnIix7eJzDZPEUfSs8EQNvxY__QH3-at_2gxh05h3MQy-S_M8CeWWSmP8VwhOU1AaIcU9WZPfAGR62TDYCLjJsmEYOIuTmgHaaw'); background-size: cover; background-position: center;">
+<!-- Map Markers (Simulated) -->
+<div class="absolute top-1/4 left-1/3 flex items-center justify-center">
+<div class="w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-[0_0_8px_rgba(0,108,76,0.8)]"></div>
+</div>
+<div class="absolute top-1/2 left-1/2 flex items-center justify-center">
+<div class="w-5 h-5 bg-status-violation rounded-full border-2 border-white shadow-[0_0_12px_rgba(239,68,68,0.8)] pulse-dot"></div>
+</div>
+<div class="absolute bottom-1/3 right-1/4 flex items-center justify-center">
+<div class="w-4 h-4 bg-primary-container rounded-full border-2 border-white shadow-[0_0_8px_rgba(245,152,39,0.8)]"></div>
+</div>
+</div>
+</div>
+<!-- Alert Feed -->
+<div class="glass-panel rounded-xl p-5 flex flex-col h-full overflow-hidden">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Live Alert Feed</h3>
+<span class="material-symbols-outlined text-tertiary cursor-pointer hover:text-primary">filter_list</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-3">
+<!-- Alert Item 1 (Violation) -->
+<div class="bg-orange-light border-l-4 border-status-violation p-3 rounded-r-lg shadow-sm flex items-start gap-3">
+<div class="w-2 h-2 rounded-full bg-status-violation mt-1.5 pulse-dot shrink-0"></div>
+<div>
+<div class="flex justify-between items-baseline mb-1 w-full">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">B-1234-DLH</span>
+<span class="font-label-md text-label-md text-tertiary">10:42 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Route Deviation - Sudirman Axis</p>
+</div>
+</div>
+<!-- Alert Item 2 (Warning) -->
+<div class="bg-surface border-l-4 border-primary-container p-3 rounded-r-lg shadow-sm flex items-start gap-3">
+<div class="w-2 h-2 rounded-full bg-primary-container mt-1.5 shrink-0"></div>
+<div>
+<div class="flex justify-between items-baseline mb-1 w-full">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">B-9988-DLH</span>
+<span class="font-label-md text-label-md text-tertiary">10:35 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Idle for &gt; 30 mins - Menteng</p>
+</div>
+</div>
+<!-- Alert Item 3 (Info) -->
+<div class="bg-surface border-l-4 border-secondary p-3 rounded-r-lg shadow-sm flex items-start gap-3 opacity-75">
+<div class="w-2 h-2 rounded-full bg-secondary mt-1.5 shrink-0"></div>
+<div>
+<div class="flex justify-between items-baseline mb-1 w-full">
+<span class="font-title-lg text-title-lg text-on-surface font-bold">B-5566-DLH</span>
+<span class="font-label-md text-label-md text-tertiary">10:15 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Maintenance Completed</p>
+</div>
+</div>
+</div>
+<button class="mt-4 w-full py-2 bg-surface-container hover:bg-surface-variant text-on-surface rounded-lg font-label-md transition-colors">
+                        View All Alerts
+                    </button>
+</div>
+</section>
+</main>
+</div>
+</body></html>

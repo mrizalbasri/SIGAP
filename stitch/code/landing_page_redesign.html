@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SIGAP - Sistem Integrasi Gerak Armada Pintar</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-secondary-fixed-variant": "#005138",
+                "surface-variant": "#e2e2e2",
+                "surface-container-lowest": "#ffffff",
+                "on-secondary": "#ffffff",
+                "on-tertiary": "#ffffff",
+                "on-tertiary-fixed": "#1c1b1b",
+                "secondary-fixed": "#81f9c5",
+                "inverse-on-surface": "#f1f1f1",
+                "status-offline": "#9ca3af",
+                "on-primary": "#ffffff",
+                "secondary-container": "#7ef6c2",
+                "inverse-surface": "#2f3131",
+                "primary": "#8b5000",
+                "surface-container-low": "#f3f3f3",
+                "on-tertiary-fixed-variant": "#474746",
+                "orange-light": "#fff3e0",
+                "surface-container-highest": "#e2e2e2",
+                "inverse-primary": "#ffb870",
+                "primary-fixed-dim": "#ffb870",
+                "status-violation": "#ef4444",
+                "on-secondary-fixed": "#002114",
+                "on-background": "#1a1c1c",
+                "error": "#ba1a1a",
+                "secondary": "#006c4c",
+                "surface": "#f9f9f9",
+                "primary-container": "#f59827",
+                "on-secondary-container": "#00714f",
+                "glass-surface": "rgba(255, 255, 255, 0.7)",
+                "surface-container-high": "#e8e8e8",
+                "error-container": "#ffdad6",
+                "surface-tint": "#8b5000",
+                "background": "#f9f9f9",
+                "green-light": "#e8f8f3",
+                "on-primary-fixed-variant": "#693c00",
+                "on-primary-fixed": "#2c1600",
+                "on-primary-container": "#613700",
+                "tertiary-container": "#afadad",
+                "surface-container": "#eeeeee",
+                "tertiary-fixed-dim": "#c8c6c5",
+                "tertiary-fixed": "#e5e2e1",
+                "surface-bright": "#f9f9f9",
+                "primary-fixed": "#ffdcbe",
+                "outline": "#877463",
+                "secondary-fixed-dim": "#63dcaa",
+                "on-surface-variant": "#544435",
+                "outline-variant": "#dac2af",
+                "tertiary": "#5f5e5e",
+                "on-error": "#ffffff",
+                "on-surface": "#1a1c1c",
+                "on-tertiary-container": "#424141",
+                "surface-dim": "#dadada",
+                "on-error-container": "#93000a"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "container-margin-mobile": "16px",
+                "gutter": "24px",
+                "container-margin-desktop": "32px",
+                "base": "8px",
+                "sidebar-width": "280px"
+        },
+        "fontFamily": {
+                "data-mono": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Montserrat"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "title-lg": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Montserrat"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Montserrat"
+                ],
+                "headline-lg-mobile": [
+                        "Montserrat"
+                ]
+        },
+        "fontSize": {
+                "data-mono": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-lg": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "title-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .grid-pattern {
+            background-image: linear-gradient(to right, rgba(229, 231, 235, 0.4) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(229, 231, 235, 0.4) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+        }
+        .glow-orange {
+            box-shadow: 0 8px 30px rgba(245, 152, 39, 0.3);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .clip-diagonal {
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="bg-surface/90 backdrop-blur-lg fixed top-0 w-full z-50 border-b border-surface-container-high transition-all duration-300">
+<div class="flex justify-between items-center h-20 px-gutter max-w-7xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="font-display-lg text-title-lg font-bold text-primary tracking-tight">SIGAP</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">Features</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">Technology</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">Impact</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2.5 text-on-surface-variant font-medium hover:text-primary transition-all duration-200 cursor-pointer rounded-full hover:bg-surface-container-low">Login</button>
+<button class="px-6 py-2.5 bg-on-surface text-surface font-semibold rounded-full shadow-md hover:bg-primary transition-all duration-300 cursor-pointer">Contact Us</button>
+</div>
+</div>
+</nav>
+<main class="pt-20 min-h-screen">
+<!-- Full-Width Hero Section -->
+<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-on-surface">
+<!-- Hero Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<img alt="Jakarta Smart Fleet Map" class="w-full h-full object-cover opacity-40 mix-blend-luminosity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZe8B4ct_HI3cSsc22aRKqhv4MjeG9aZt5v3QkQD5DjH_-nRkXYCnIzsNek1gs8btHiapvmm7tLxUrhG0CaJvMK_SK4aGinGJwcb7C9DM7Gnrrf_e5V0PA3Ah_xBQ0_XByCw8tMjmY3mNYWIQKpOvtvpl5v1niXsHnCJb006x0Pz7813XmJmUhQSDrMac_XU5rdv6FzCJs8dRKQW9OH6d2otTdgY7yP8yaodrwLp0l6jHFL74gJAHefJjGS0OfAHcBeIsCRXX9_cE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface via-on-surface/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-on-surface/90 via-on-surface/50 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-gutter w-full grid lg:grid-cols-2 gap-12 items-center">
+<div class="text-left space-y-8 py-20">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/10 backdrop-blur-md border border-surface/20 text-surface">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-md text-label-md tracking-wider uppercase">Smart Fleet Jakarta</span>
+</div>
+<h1 class="font-display-lg text-[3.5rem] leading-[1.1] text-surface font-bold">
+                Revolusi <span class="text-primary-container">Manajemen Armada</span> Ibu Kota
+            </h1>
+<p class="font-body-lg text-[1.125rem] text-surface-variant leading-relaxed max-w-lg">
+                Monitor, integrasi, dan optimalisasi pergerakan armada kebersihan Jakarta secara real-time dengan teknologi AI dan IoT terkini.
+            </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="px-8 py-4 bg-primary-container text-on-primary-container font-semibold rounded-full glow-orange hover:bg-primary-container/90 transition-all duration-300">
+                    Eksplorasi Dashboard
+                </button>
+<button class="px-8 py-4 bg-transparent text-surface font-semibold rounded-full border border-surface/30 hover:bg-surface/10 transition-all duration-300 flex items-center gap-2">
+<span class="material-symbols-outlined">play_circle</span> Video Demo
+                </button>
+</div>
+</div>
+<!-- Hero Decorative Elements -->
+<div class="hidden lg:block relative h-[500px]">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 glass-card p-6 rounded-3xl w-80 shadow-2xl animate-float border-surface/10 bg-surface/10 text-surface backdrop-blur-xl">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-secondary/20 rounded-lg">
+<span class="material-symbols-outlined text-secondary-container">route</span>
+</div>
+<div>
+<p class="font-label-md text-xs text-surface-variant">Live Tracking</p>
+<p class="font-title-lg font-bold text-surface">Optimasi Rute</p>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-sm mb-1 text-surface-variant">
+<span>Ketepatan Rute</span>
+<span class="text-secondary-container font-bold">98%</span>
+</div>
+<div class="h-2 bg-surface/20 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-1 text-surface-variant">
+<span>Efisiensi Waktu</span>
+<span class="text-primary-container font-bold">+40%</span>
+</div>
+<div class="h-2 bg-surface/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Integrated Real-time Stats Bar -->
+<section class="bg-surface relative z-20 -mt-10 max-w-6xl mx-auto px-gutter rounded-3xl shadow-xl">
+<div class="glass-card rounded-3xl p-8 border border-surface-container-high flex flex-col md:flex-row justify-between items-center gap-8 divide-y md:divide-y-0 md:divide-x divide-surface-container-high">
+<div class="flex-1 text-center w-full py-2">
+<p class="font-display-lg text-[2.5rem] font-bold text-on-surface mb-1">577+</p>
+<p class="font-title-lg text-sm text-on-surface-variant">Armada Aktif</p>
+</div>
+<div class="flex-1 text-center w-full py-2">
+<p class="font-display-lg text-[2.5rem] font-bold text-secondary mb-1">12.4k</p>
+<p class="font-title-lg text-sm text-on-surface-variant">Ton Sampah/Hari</p>
+</div>
+<div class="flex-1 text-center w-full py-2">
+<p class="font-display-lg text-[2.5rem] font-bold text-primary-container mb-1">98%</p>
+<p class="font-title-lg text-sm text-on-surface-variant">Ketepatan Rute</p>
+</div>
+</div>
+</section>
+<!-- Feature Showcase (Z-Pattern) -->
+<section class="py-32 px-gutter bg-surface grid-pattern relative">
+<div class="absolute inset-0 bg-gradient-to-b from-surface via-transparent to-surface pointer-events-none"></div>
+<div class="max-w-7xl mx-auto space-y-32 relative z-10">
+<!-- Showcase 1: Command Center -->
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div class="order-2 lg:order-1 relative rounded-[2rem] overflow-hidden aspect-[4/3] shadow-2xl group">
+<img alt="Command Center Dashboard" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVAFr7Q4DHsSAcduf-Io5_z9P3VKcxPhc5PlL3cBps4tSrkjGrQNwFx4eculUo0zgIxBD4UU3qtCEO2lEMG3SGh-74RBzsjNSX6InaIZgbrB8wU_TsYxQwDset_b8bLeggyyOSd-Pb5__9ODBxYXG0BCJer9wRpe2ULppDiFNnVTMl216ZGpnh8lZe3qE5k1MDhETCGaUtDXNWdrqb_ZmvArKvSMPLn7iv2vWS-3IJjsgtBdJdamIFBVrU4f8yPrYbZNx_PY-Ur4A"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/60 to-transparent"></div>
+</div>
+<div class="order-1 lg:order-2 space-y-6">
+<div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-2">
+<span class="material-symbols-outlined text-3xl">desktop_windows</span>
+</div>
+<h2 class="font-headline-lg text-4xl text-on-surface font-bold">Centralized Command Center</h2>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">
+                    Pusat kendali visual yang memantau setiap pergerakan armada, status kesehatan mesin, hingga tingkat okupansi sampah di TPS secara real-time. Dari sistem konvensional menuju ekosistem digital yang cerdas dan transparan.
+                </p>
+<ul class="space-y-4 pt-4">
+<li class="flex items-start gap-3">
+<div class="mt-1 p-1 rounded-full bg-secondary/20 text-secondary"><span class="material-symbols-outlined text-sm">check</span></div>
+<span class="font-body-md text-on-surface-variant">Monitoring GPS real-time untuk seluruh armada aktif</span>
+</li>
+<li class="flex items-start gap-3">
+<div class="mt-1 p-1 rounded-full bg-secondary/20 text-secondary"><span class="material-symbols-outlined text-sm">check</span></div>
+<span class="font-body-md text-on-surface-variant">Dashboard analitik performa terpusat</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Showcase 2: Driver App & IoT -->
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div class="space-y-6">
+<div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-secondary/10 text-secondary mb-2">
+<span class="material-symbols-outlined text-3xl">smartphone</span>
+</div>
+<h2 class="font-headline-lg text-4xl text-on-surface font-bold">Driver App &amp; Integrasi IoT</h2>
+<p class="font-body-lg text-on-surface-variant leading-relaxed">
+                    Panduan rute dinamis, pelaporan insiden instan, dan absensi digital untuk pengemudi, didukung oleh integrasi langsung dengan sensor bahan bakar dan GPS tracker untuk prediksi kebutuhan armada berbasis volume historis.
+                </p>
+<div class="grid grid-cols-2 gap-6 pt-6">
+<div class="p-6 rounded-2xl bg-surface-container-low border border-surface-container-high">
+<span class="material-symbols-outlined text-primary mb-3 block text-2xl">router</span>
+<h4 class="font-title-lg text-base mb-2">IoT Sensor</h4>
+<p class="font-body-md text-sm text-on-surface-variant">Integrasi langsung dengan sensor bahan bakar.</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-low border border-surface-container-high">
+<span class="material-symbols-outlined text-primary mb-3 block text-2xl">query_stats</span>
+<h4 class="font-title-lg text-base mb-2">Analytics</h4>
+<p class="font-body-md text-sm text-on-surface-variant">Prediksi kebutuhan berbasis historis.</p>
+</div>
+</div>
+</div>
+<div class="relative rounded-[2rem] overflow-hidden aspect-[4/3] shadow-2xl bg-surface-container-highest group flex items-center justify-center">
+<!-- Placeholder for App/IoT graphic, using a clean gradient and icon for now as specific image wasn't provided for this split -->
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-highest to-surface-variant"></div>
+<div class="relative z-10 w-64 h-auto glass-card rounded-[2rem] p-4 shadow-xl transform rotate-[-5deg] transition-transform duration-500 group-hover:rotate-0">
+<div class="bg-surface rounded-xl p-4 h-96 border border-surface-container">
+<div class="flex items-center justify-between mb-6">
+<div class="w-8 h-8 rounded-full bg-surface-container-high"></div>
+<div class="w-16 h-4 rounded-full bg-surface-container-high"></div>
+</div>
+<div class="space-y-4">
+<div class="h-24 rounded-lg bg-surface-container"></div>
+<div class="h-12 rounded-lg bg-secondary/10 border border-secondary/20"></div>
+<div class="h-12 rounded-lg bg-surface-container"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Minimalist Process Section -->
+<section class="py-24 px-gutter bg-surface-container-lowest border-y border-surface-container-high">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16 max-w-2xl mx-auto">
+<h2 class="font-headline-lg text-4xl text-on-surface font-bold mb-4">Transformasi Efisiensi Lapangan</h2>
+<p class="font-body-lg text-on-surface-variant">Bagaimana SIGAP merubah operasional konvensional menjadi cerdas dan terintegrasi.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8 relative">
+<!-- Connecting Line -->
+<div class="hidden md:block absolute top-12 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-surface-container-high via-primary-container to-surface-container-high z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center text-center group">
+<div class="w-24 h-24 rounded-full bg-surface flex items-center justify-center shadow-lg border-4 border-surface-container-lowest mb-6 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">assignment_late</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl w-full">
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 block">Sebelum</span>
+<h3 class="font-title-lg text-lg mb-3">Sistem Konvensional</h3>
+<ul class="text-sm text-on-surface-variant space-y-2 text-left">
+<li>• Pelaporan manual yang lambat</li>
+<li>• Rute armada tidak terpantau</li>
+<li>• Konsumsi BBM tidak efisien</li>
+</ul>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center text-center group mt-8 md:mt-0">
+<div class="w-24 h-24 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30 border-4 border-surface-container-lowest mb-6 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl text-surface">autorenew</span>
+</div>
+<div class="bg-primary/5 border border-primary/20 p-6 rounded-2xl w-full">
+<span class="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">Proses</span>
+<h3 class="font-title-lg text-lg mb-3 text-primary">Integrasi SIGAP</h3>
+<p class="text-sm text-on-surface-variant">Pengumpulan data real-time via IoT, analisis AI untuk optimasi rute, dan distribusi tugas via aplikasi pengemudi.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center text-center group mt-8 md:mt-0">
+<div class="w-24 h-24 rounded-full bg-secondary flex items-center justify-center shadow-lg shadow-secondary/30 border-4 border-surface-container-lowest mb-6 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl text-surface">task_alt</span>
+</div>
+<div class="bg-secondary/5 border border-secondary/20 p-6 rounded-2xl w-full">
+<span class="text-xs font-bold text-secondary uppercase tracking-wider mb-2 block">Hasil</span>
+<h3 class="font-title-lg text-lg mb-3 text-secondary">Solusi Cerdas</h3>
+<ul class="text-sm text-on-surface-variant space-y-2 text-left">
+<li>• Monitoring GPS real-time</li>
+<li>• Optimasi rute otomatis via AI</li>
+<li>• Peningkatan efisiensi 40%</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- High-Contrast Success Story / CTA -->
+<section class="py-24 px-gutter bg-on-surface relative overflow-hidden">
+<!-- Abstract Shapes -->
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary-container rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform -translate-x-1/2 translate-y-1/2"></div>
+<div class="max-w-5xl mx-auto relative z-10 text-center">
+<span class="material-symbols-outlined text-6xl text-primary-container mb-8 block">format_quote</span>
+<h2 class="font-display-lg text-3xl md:text-5xl text-surface leading-tight mb-12 font-bold">
+            "Efisiensi Meningkat 40%. Data berdasarkan implementasi fase pertama pada armada pengangkut sampah Jakarta."
+        </h2>
+<div class="w-24 h-1 bg-surface-variant/20 mx-auto mb-12 rounded-full"></div>
+<h3 class="font-headline-lg text-2xl text-surface mb-6">Siap Mengoptimalkan Operasional Anda?</h3>
+<p class="font-body-lg text-surface-variant mb-10 max-w-2xl mx-auto">
+            Bergabunglah dengan ratusan pengelola armada yang telah meningkatkan efisiensi dan transparansi bersama SIGAP.
+        </p>
+<div class="flex flex-wrap justify-center gap-6">
+<button class="px-10 py-4 bg-primary-container text-on-primary-container font-semibold rounded-full shadow-lg hover:bg-primary-container/90 transition-transform hover:-translate-y-1">
+                Bergabung dalam Revolusi
+            </button>
+<button class="px-10 py-4 bg-transparent text-surface font-semibold rounded-full border border-surface/30 hover:bg-surface/10 transition-transform hover:-translate-y-1">
+                Jadwalkan Konsultasi
+            </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Minimalist Footer -->
+<footer class="bg-surface w-full py-16 border-t border-surface-container-high">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-gutter max-w-7xl mx-auto">
+<div class="md:col-span-1">
+<span class="font-display-lg text-xl font-bold text-on-surface mb-6 block tracking-tight">SIGAP</span>
+<p class="text-on-surface-variant font-body-md text-sm leading-relaxed">
+    Sistem Integrasi Gerak Armada Pintar - Menuju Jakarta yang lebih bersih dan cerdas melalui teknologi.
+</p>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 text-sm uppercase tracking-wider">Navigasi</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">Features</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">Technology</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">Fleet Portal</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 text-sm uppercase tracking-wider">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">Terms of Service</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-sm" href="#">DLH Website</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6 text-sm uppercase tracking-wider">Kontak</h4>
+<p class="text-on-surface-variant font-body-md text-sm leading-relaxed mb-6">
+    Dinas Lingkungan Hidup DKI Jakarta<br/>Jl. Mandala V, Cililitan, Jakarta Timur
+</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface hover:bg-primary hover:text-surface transition-all" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+<a class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface hover:bg-primary hover:text-surface transition-all" href="#"><span class="material-symbols-outlined text-sm">mail</span></a>
+<a class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface hover:bg-primary hover:text-surface transition-all" href="#"><span class="material-symbols-outlined text-sm">call</span></a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-gutter mt-16 pt-8 border-t border-surface-container-high text-center md:text-left flex flex-col md:flex-row justify-between items-center">
+<p class="text-on-surface-variant font-body-md text-sm">© 2024 DLH DKI Jakarta. SIGAP - Sistem Integrasi Gerak Armada Pintar.</p>
+</div>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        entry.target.classList.remove('opacity-0', 'translate-y-8');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('section > div').forEach(el => {
+                if(!el.classList.contains('absolute')) {
+                    el.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+                    observer.observe(el);
+                }
+            });
+            
+            // Navbar scroll effect
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 50) {
+                    nav.classList.add('shadow-sm', 'bg-surface/95');
+                    nav.classList.remove('bg-surface/90');
+                } else {
+                    nav.classList.remove('shadow-sm', 'bg-surface/95');
+                    nav.classList.add('bg-surface/90');
+                }
+            });
+        });
+</script>
+</body></html>

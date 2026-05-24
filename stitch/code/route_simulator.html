@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SIGAP Command Center - Route Simulator</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Montserrat:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#63dcaa",
+                        "secondary-fixed": "#81f9c5",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#dac2af",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container": "#eeeeee",
+                        "tertiary-container": "#afadad",
+                        "on-secondary-fixed": "#002114",
+                        "inverse-primary": "#ffb870",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "status-offline": "#9ca3af",
+                        "secondary-container": "#7ef6c2",
+                        "on-surface-variant": "#544435",
+                        "inverse-surface": "#2f3131",
+                        "tertiary": "#5f5e5e",
+                        "on-background": "#1a1c1c",
+                        "primary-fixed": "#ffdcbe",
+                        "on-primary-container": "#613700",
+                        "status-violation": "#ef4444",
+                        "orange-light": "#fff3e0",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "surface-container-low": "#f3f3f3",
+                        "glass-surface": "rgba(255, 255, 255, 0.85)",
+                        "surface": "#f9f9f9",
+                        "primary-fixed-dim": "#ffb870",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#f59827",
+                        "green-light": "#e8f8f3",
+                        "tertiary-fixed": "#e5e2e1",
+                        "surface-tint": "#8b5000",
+                        "primary": "#8b5000",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-tertiary-container": "#424141",
+                        "on-secondary-fixed-variant": "#005138",
+                        "surface-bright": "#f9f9f9",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-dim": "#dadada",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006c4c",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#2c1600",
+                        "background": "#f9f9f9",
+                        "outline": "#877463",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#693c00",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-container": "#00714f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "base": "8px",
+                        "container-margin-desktop": "32px",
+                        "container-margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "data-mono": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-mono": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="bg-glass-surface dark:bg-inverse-surface backdrop-blur-xl w-[280px] h-screen fixed left-0 top-0 border-r border-outline-variant dark:border-outline shadow-sm dark:shadow-none flex flex-col h-full py-base z-50">
+<!-- Header -->
+<div class="px-6 py-4 flex items-center gap-3 border-b border-outline-variant/30 mb-4">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center shadow-sm">
+<span class="text-on-primary font-headline-md text-headline-md font-bold">S</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-inverse-primary tracking-tight text-xl leading-none">SIGAP</h1>
+<p class="text-[10px] text-on-surface-variant leading-tight mt-1 w-32">Sistem Integrasi Gerak Armada Pintar</p>
+</div>
+</div>
+<!-- Main Tabs -->
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary dark:text-inverse-primary border-r-4 border-primary dark:border-inverse-primary bg-primary-container/20 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-body-md text-body-md font-semibold">Live Map</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md font-medium">Fleet Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">warning</span>
+<span class="font-body-md text-body-md font-medium">Alert Logs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-md text-body-md font-medium">Analytics</span>
+</a>
+</nav>
+<!-- Footer Tabs -->
+<div class="px-3 pt-4 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-tertiary-fixed-dim hover:text-primary dark:hover:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-variant/10 transition-all duration-300 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md text-body-md font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="bg-glass-surface dark:bg-inverse-surface/80 backdrop-blur-md fixed top-0 right-0 w-[calc(100%-280px)] h-16 z-40 border-b border-outline-variant dark:border-outline shadow-sm flex items-center justify-between px-gutter">
+<div class="flex items-center gap-4 w-1/3">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface text-lg">Command Center</h2>
+</div>
+<div class="flex-1 flex justify-center focus-within:ring-2 focus-within:ring-primary/50 rounded-full max-w-md">
+<div class="relative w-full bg-surface-container-low rounded-full flex items-center px-4 py-2 border border-outline-variant/50">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none outline-none w-full font-body-md text-body-md text-on-surface placeholder-on-surface-variant/70" placeholder="Search fleet, routes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center justify-end gap-6 w-1/3">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary cursor-pointer transition-colors relative">
+<span class="material-symbols-outlined text-[24px]">schedule</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary cursor-pointer transition-colors relative">
+<span class="material-symbols-outlined text-[24px]">notifications_active</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary-container rounded-full animate-pulse"></span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden cursor-pointer">
+<img alt="Dispatcher Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmMa9l-b_xl-_DqAgCNIvxe_IW3KvOhUMQdrrKxruZ0A4cvpVvHpiH94O0mLnQLfQ5H8KqhLfKUntoDwP7VfikewUSkerzAT2gn-OXWu22gnzOqvVdLB-mgwdtuC61VCAxIimbs2aQa-6i8ptgsl5_ZHbWuTUQRrUypmc0IVJsX_EYd4Ds4nsjekrq2_a3vC2WwqRFtnEBiaU2pWVPrwEg76Ux1U8OeCWTAKuI0Lj1n2_59KpYMF_qsDkPhWuqkwdL5IkDcYbd9Y0"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 w-full h-screen relative bg-surface-container-low">
+<!-- Map Background Layer (Simulated) -->
+<div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" data-alt="A highly detailed, top-down digital map interface displaying a complex urban city grid, similar to Mapbox or Google Maps. The map uses a clean, light-mode aesthetic with soft grey roads, subtle white building footprints, and muted green park areas. Thin, vibrant glowing orange lines representing active vehicle routes trace through the city streets. The overall mood is technological, precise, and professional, optimized as a background for a data-heavy command center dashboard." data-location="Jakarta, Indonesia" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA9D0uv8c2E3UjSwuA4d9pUOeHBuiUwIKjZiOlRI1CEOUo1F8vK10V-8h5TwuCwMymaF7EXUz8fxrdoAJdn0tme06sIh_D8jjEBV_aWDBt9NXPZzhRUt5BDjF3qjtNn6vmiFGh6axFpUGxh0aaXd2zQRTmgdl8rbTC6phHGANymw05IBQCHQe9PmUx3-Yq-lJ5th2bimOORAHyA9IyDwZycoBTRtqdDm7V5UudoSS92aEproQCIryVMWRp8Nk3_4sjU5JJ1sWhMUZM');">
+<div class="absolute inset-0 bg-surface-container-lowest/40 backdrop-blur-[2px]"></div> <!-- Light wash to ensure UI readability -->
+<!-- Simulated Map Markers & Routes -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+<!-- Route Line -->
+<path class="animate-[dash_10s_linear_infinite]" d="M 200 300 Q 400 150 600 400 T 1000 200" fill="none" stroke="#f59827" stroke-dasharray="10 5" stroke-linecap="round" stroke-width="4"></path>
+<!-- Markers -->
+<circle class="drop-shadow-md" cx="200" cy="300" fill="#27ab7d" r="8" stroke="#fff" stroke-width="2"></circle>
+<circle class="drop-shadow-lg" cx="600" cy="400" fill="#f59827" r="10" stroke="#fff" stroke-width="2"></circle>
+<circle class="drop-shadow-md" cx="1000" cy="200" fill="#ef4444" r="8" stroke="#fff" stroke-width="2"></circle>
+</svg>
+</div>
+<!-- Overlays Container -->
+<div class="relative z-10 w-full h-full flex justify-between p-gutter pointer-events-none">
+<!-- Left Panel: What-If Route Simulator -->
+<div class="w-[420px] h-fit bg-surface-container-lowest/90 backdrop-blur-xl border border-outline-variant shadow-lg rounded-2xl p-5 pointer-events-auto flex flex-col gap-6">
+<!-- Header -->
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface">Route Simulator</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">What-if scenario planning</p>
+</div>
+<span class="px-3 py-1 bg-orange-light text-primary font-label-md text-label-md rounded-full border border-primary/20">Active</span>
+</div>
+<!-- Draggable Route Points -->
+<div class="space-y-3">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Waypoints</span>
+<button class="text-primary hover:text-primary-container text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">add</span> Add Stop
+                        </button>
+</div>
+<div class="space-y-2 relative before:absolute before:left-5 before:top-4 before:bottom-4 before:w-0.5 before:bg-outline-variant/50">
+<!-- Start Point -->
+<div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant/30 group">
+<span class="material-symbols-outlined text-secondary text-[20px] z-10 bg-surface-container-low">radio_button_checked</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface-variant">Origin</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface truncate">Depo Cakung Barat</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/50 cursor-grab hover:text-on-surface">drag_indicator</span>
+</div>
+<!-- Draggable Stop -->
+<div class="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-xl border border-primary/40 shadow-sm cursor-grab active:cursor-grabbing hover:border-primary transition-colors group relative z-10">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container ml-1.5 z-10 outline outline-4 outline-surface-container-lowest"></span>
+<div class="flex-1 pl-1">
+<p class="font-label-md text-label-md text-primary">Deviation Point</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface truncate">Jl. Perintis Kemerdekaan</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-error cursor-pointer mr-1">close</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-grab">drag_indicator</span>
+</div>
+<!-- Destination -->
+<div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-xl border border-outline-variant/30 group">
+<span class="material-symbols-outlined text-error text-[20px] z-10 bg-surface-container-low">location_on</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface-variant">Destination</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface truncate">TPST Bantargebang</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/50 cursor-grab hover:text-on-surface">drag_indicator</span>
+</div>
+</div>
+</div>
+<!-- Impact Metrics Grid -->
+<div class="pt-4 border-t border-outline-variant/50">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase mb-3">Predicted Impact</h4>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container-low rounded-xl p-3 border-l-4 border-error">
+<p class="text-on-surface-variant text-xs">Est. Time</p>
+<div class="flex items-end gap-2 mt-1">
+<p class="text-xl font-bold text-on-surface">2h 15m</p>
+<span class="text-error text-xs font-medium mb-1 flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 20m</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-3 border-l-4 border-primary-container">
+<p class="text-on-surface-variant text-xs">Fuel Consumption</p>
+<div class="flex items-end gap-2 mt-1">
+<p class="text-xl font-bold text-on-surface">18.5 L</p>
+<span class="text-primary-container text-xs font-medium mb-1 flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 2.1L</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-surface-tint text-on-primary font-semibold px-6 py-3 rounded-xl transition-colors duration-200 shadow-sm mt-2 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">route</span>
+                    Calculate Alternate Routes
+                </button>
+</div>
+<!-- Right Panel: TPA Slot Confirmation -->
+<div class="w-[360px] h-fit bg-surface-container-lowest/90 backdrop-blur-xl border border-outline-variant shadow-lg rounded-2xl p-5 pointer-events-auto flex flex-col gap-5">
+<div class="flex items-center gap-3 pb-3 border-b border-outline-variant/50">
+<div class="w-10 h-10 bg-green-light rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">domain</span>
+</div>
+<div>
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface">TPA Bantargebang</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Slot Availability</p>
+</div>
+</div>
+<!-- Capacity Alert -->
+<div class="bg-orange-light border border-primary-container/30 rounded-xl p-3 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container mt-0.5">info</span>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Zone B Approaching Capacity</p>
+<p class="text-xs text-on-surface-variant mt-1">Recommended to route new arrivals to Zone C to minimize queue time.</p>
+</div>
+</div>
+<!-- Slot List -->
+<div class="space-y-4">
+<!-- Zone A -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Zone A - Active</span>
+<span class="text-xs text-secondary font-semibold">45 / 100 Trucks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<!-- Zone B -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Zone B - Heavy Queue</span>
+<span class="text-xs text-primary-container font-semibold">88 / 100 Trucks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden">
+<div class="bg-primary-container h-2 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- Zone C -->
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Zone C - Open</span>
+<span class="text-xs text-secondary font-semibold">12 / 150 Trucks</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full" style="width: 8%"></div>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/50 flex flex-col gap-3">
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-2.5 font-body-md text-on-surface focus:ring-2 focus:ring-secondary/50 outline-none">
+<option>Assign to Zone C (Recommended)</option>
+<option>Assign to Zone A</option>
+<option disabled="">Assign to Zone B (Full)</option>
+</select>
+<button class="w-full bg-secondary hover:bg-on-secondary-container text-on-secondary font-semibold px-6 py-3 rounded-xl transition-colors duration-200 shadow-sm flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        Konfirmasi Slot TPA
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<style>
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+    </style>
+</body></html>
