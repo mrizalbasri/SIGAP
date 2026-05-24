@@ -8,6 +8,9 @@ import LiveMap from "@/components/map/LiveMap";
 import AlertFeed from "@/components/alerts/AlertFeed";
 import AnalyticsCharts from "@/components/dashboard/AnalyticsCharts";
 import WasteCollection from "@/components/collection/WasteCollection";
+import FleetManagement from "@/components/fleet/FleetManagement";
+import AlertLogs from "@/components/alerts/AlertLogs";
+import Analytics from "@/components/analytics/Analytics";
 import { useFleetData } from "@/hooks/useFleetData";
 import { RefreshCw, Wrench, ShieldAlert } from "lucide-react";
 
@@ -48,6 +51,12 @@ export default function Dashboard() {
         );
       case "collection":
         return <WasteCollection />;
+      case "fleet":
+        return <FleetManagement />;
+      case "alerts":
+        return <AlertLogs />;
+      case "analytics":
+        return <Analytics />;
       default:
         // Placeholder for other tabs (Fleet, Alerts list, Analytics, Settings, Support)
         return (
