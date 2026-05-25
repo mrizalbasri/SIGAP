@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
@@ -35,10 +36,13 @@ import {
 // ─── Dynamic Map Import (MapLibre - no token needed) ─────────────────────────
 const LandingMap = dynamic(() => import("@/components/landing/landing-map"), { ssr: false });
 const LandingRouteMap = dynamic(() => import("@/components/landing/landing-route-map"), { ssr: false });
+const FeaturesBentoGrid = dynamic(() => import("@/components/landing/FeaturesBentoGrid"), { ssr: false });
 
 // ─── Scroll Reveal Hook ──────────────────────────────────────────────────────
 
-function useReveal() {
+type RevealDirection = "up" | "down" | "left" | "right" | "scale";
+
+function useReveal(direction: RevealDirection = "up", threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -46,12 +50,29 @@ function useReveal() {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+      { threshold, rootMargin: "0px 0px -60px 0px" }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
-  return { ref, visible };
+  }, [threshold]);
+  return { ref, visible, direction };
+}
+
+function revealClass(visible: boolean, direction: RevealDirection = "up", _delay = 0) {
+  const base = "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]";
+  const hidden: Record<RevealDirection, string> = {
+    up: "opacity-0 translate-y-10",
+    down: "opacity-0 -translate-y-10",
+    left: "opacity-0 translate-x-12",
+    right: "opacity-0 -translate-x-12",
+    scale: "opacity-0 scale-90",
+  };
+  const shown = "opacity-100 translate-x-0 translate-y-0 scale-100";
+  return `${base} ${visible ? shown : hidden[direction]}`;
+}
+
+function revealStyle(delay: number) {
+  return delay ? { transitionDelay: `${delay}ms` } : undefined;
 }
 
 // ─── Animated Counter Hook ────────────────────────────────────────────────────
@@ -125,12 +146,12 @@ export default function LandingPage() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [heroMounted, setHeroMounted] = useState(false);
 
-  const statsReveal = useReveal();
-  const featuresReveal = useReveal();
-  const showcaseReveal = useReveal();
-  const impactReveal = useReveal();
-  const testimonialReveal = useReveal();
-  const mobileAppReveal = useReveal();
+  const statsReveal = useReveal("up");
+  const featuresReveal = useReveal("up");
+  const showcaseReveal = useReveal("up");
+  const impactReveal = useReveal("up");
+  const testimonialReveal = useReveal("scale");
+  const mobileAppReveal = useReveal("up");
 
   const fleetCount = useCounter(1369, 2000, countersReady);
   const tonsDay = useCounter(12400, 2200, countersReady);
@@ -160,9 +181,7 @@ export default function LandingPage() {
       <nav className="bg-white/90 backdrop-blur-2xl fixed top-0 w-full z-50 border-b border-zinc-100 shadow-sm">
         <div className="flex justify-between items-center h-[72px] px-6 md:px-12 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#2d9f6c] to-[#24855a] rounded-2xl flex items-center justify-center shadow-lg shadow-[#2d9f6c]/20">
-              <Recycle className="w-5 h-5 text-white" />
-            </div>
+            <Image src="/logo.webp" alt="SIGAP Logo" width={40} height={40} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/20" />
             <div className="leading-none">
               <span className="font-headline text-[22px] font-extrabold text-zinc-900 tracking-tight block">SIGAP</span>
               <span className="text-[8px] font-bold text-[#2d9f6c] uppercase tracking-[0.2em]">Dinas Lingkungan Hidup</span>
@@ -369,15 +388,15 @@ export default function LandingPage() {
           {/* Pattern overlay */}
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "30px 30px" }} />
 
-          <div className={`max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 relative z-10 transition-all duration-1000 ${statsReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+          <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 relative z-10">
             {[
               { value: fleetCount.toLocaleString("id-ID"), label: "Total Armada" },
               { value: `${(tonsDay / 1000).toFixed(1)}k`, label: "Ton Sampah / Hari" },
               { value: `${accuracy}%`, label: "Ketepatan Rute" },
               { value: `+${efficiency}%`, label: "Efisiensi Operasional" },
             ].map((s, i) => (
-              <div key={i} className="text-center group">
-                <p className="font-headline text-5xl sm:text-[3.5rem] font-extrabold tracking-[-0.04em] text-white transition-transform duration-300 group-hover:scale-105 drop-shadow-md">
+              <div key={i} className={`text-center group ${revealClass(statsReveal.visible, "scale")}`} style={revealStyle(i * 120)}>
+                <p className="font-headline text-5xl sm:text-[3.5rem] font-extrabold tracking-[-0.04em] text-white transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
                   {s.value}
                 </p>
                 <p className="text-[10px] font-bold text-white/70 uppercase tracking-[0.2em] mt-3">{s.label}</p>
@@ -391,7 +410,7 @@ export default function LandingPage() {
         ══════════════════════════════════════════════════════════════ */}
         <section id="features" ref={featuresReveal.ref} className="py-28 px-6 md:px-12 bg-white">
           <div className="max-w-7xl mx-auto">
-            <div className={`text-center mb-20 max-w-2xl mx-auto transition-all duration-1000 ${featuresReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className={`text-center mb-20 max-w-2xl mx-auto ${revealClass(featuresReveal.visible, "up")}`}>
               <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ebf7f2] text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6">
                 <Zap className="w-3.5 h-3.5" /> Fitur Unggulan
               </div>
@@ -405,29 +424,13 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {FEATURES.map((f, i) => {
-                const Icon = f.icon;
-                return (
-                  <div
-                    key={i}
-                    className={`relative bg-white rounded-3xl p-8 border ${f.border} shadow-sm hover-lift group overflow-hidden cursor-default transition-all duration-700 ${featuresReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                    style={{ transitionDelay: `${i * 100}ms` }}
-                  >
-                    <div className="relative z-10">
-                      <div className={`w-14 h-14 rounded-2xl ${f.bg} ${f.color} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-lg transition-all duration-400`}>
-                        <Icon className="w-6 h-6 stroke-[2]" />
-                      </div>
-                      <h3 className="font-headline font-extrabold text-zinc-900 text-[17px] mb-2.5 tracking-tight">{f.title}</h3>
-                      <p className="text-[13px] text-zinc-500 leading-[1.7]">{f.desc}</p>
-                      <div className={`flex items-center gap-1.5 mt-6 text-[12px] font-bold ${f.color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}>
-                        Pelajari lebih <ChevronRight className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Asymmetric Bento Grid */}
+            <FeaturesBentoGrid
+              features={FEATURES}
+              visible={featuresReveal.visible}
+              revealClass={revealClass}
+              revealStyle={revealStyle}
+            />
           </div>
         </section>
 
@@ -947,9 +950,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 items-center">
             
             {/* Left Column: Premium App Screen Mockup & Badges (Span 5) */}
-            <div className={`lg:col-span-5 flex flex-col items-center gap-8 transition-all duration-1000 ${
-              mobileAppReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-            }`}>
+            <div className={`lg:col-span-5 flex flex-col items-center gap-8 ${revealClass(mobileAppReveal.visible, "right")}`}>
               
               {/* Styled iOS Phone Mockup Container */}
               <div className="w-[280px] h-[550px] bg-zinc-950 rounded-[48px] border-[10px] border-zinc-950 shadow-2xl relative overflow-hidden flex flex-col font-sans shrink-0 border-t-[14px]">
@@ -1077,9 +1078,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right Column: Explanations and App Features (Span 7) */}
-            <div className={`lg:col-span-7 space-y-7 text-left transition-all duration-1000 ${
-              mobileAppReveal.visible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
-            }`} style={{ transitionDelay: "200ms" }}>
+            <div className={`lg:col-span-7 space-y-7 text-left ${revealClass(mobileAppReveal.visible, "left", 200)}`}>
               
               <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ebf7f2] text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em]">
                 <Smartphone className="w-3.5 h-3.5" /> Aplikasi Lapangan Supir
@@ -1153,7 +1152,7 @@ export default function LandingPage() {
         ══════════════════════════════════════════════════════════════ */}
         <section id="impact" ref={impactReveal.ref} className="py-28 px-6 md:px-12 bg-white">
           <div className="max-w-7xl mx-auto">
-            <div className={`text-center mb-20 max-w-2xl mx-auto transition-all duration-1000 ${impactReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className={`text-center mb-20 max-w-2xl mx-auto ${revealClass(impactReveal.visible, "up")}`}>
               <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#fff4e6] text-[#df8820] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6">
                 <TrendingUp className="w-3.5 h-3.5" /> Transformasi Nyata
               </div>
@@ -1191,8 +1190,7 @@ export default function LandingPage() {
               ].map((col, i) => {
                 const Icon = col.icon;
                 return (
-                  <div key={i} className={`${col.cardBg} border ${col.border} rounded-3xl p-8 hover:-translate-y-1 hover:shadow-xl transition-all duration-500 ${impactReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                    style={{ transitionDelay: `${i * 150 + 200}ms` }}>
+                  <div key={i} className={`${col.cardBg} border ${col.border} rounded-3xl p-8 hover:-translate-y-1 hover:shadow-xl transition-all duration-500 ${revealClass(impactReveal.visible, i === 0 ? "right" : i === 2 ? "left" : "up", i * 150 + 200)}`}>
                     <div className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-[9px] font-extrabold uppercase tracking-[0.2em] mb-6 ${col.badgeCls}`}>
                       {col.badge}
                     </div>
@@ -1220,7 +1218,7 @@ export default function LandingPage() {
         ══════════════════════════════════════════════════════════════ */}
         <section id="testimonials" ref={testimonialReveal.ref} className="py-28 px-6 md:px-12 bg-gradient-to-br from-[#f0faf5] to-[#f5fdf9]">
           <div className="max-w-4xl mx-auto">
-            <div className={`text-center mb-16 transition-all duration-1000 ${testimonialReveal.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className={`text-center mb-16 ${revealClass(testimonialReveal.visible, "up")}`}>
               <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6 border border-[#2d9f6c]/15 shadow-sm">
                 <Star className="w-3.5 h-3.5 fill-[#2d9f6c]" /> Testimoni
               </div>
@@ -1231,8 +1229,7 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className={`bg-white rounded-[2rem] p-10 sm:p-14 border border-zinc-100 relative overflow-hidden min-h-[300px] shadow-lg transition-all duration-1000 ${testimonialReveal.visible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.97]"}`}
-              style={{ transitionDelay: "200ms" }}>
+            <div className={`bg-white rounded-[2rem] p-10 sm:p-14 border border-zinc-100 relative overflow-hidden min-h-[300px] shadow-lg ${revealClass(testimonialReveal.visible, "scale", 200)}`}>
               <div className="absolute top-4 right-8 font-headline text-zinc-100 font-extrabold text-[160px] leading-none select-none pointer-events-none">&ldquo;</div>
 
               {TESTIMONIALS.map((t, i) => (
@@ -1318,9 +1315,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-14 border-b border-zinc-100">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 bg-gradient-to-br from-[#2d9f6c] to-[#24855a] rounded-2xl flex items-center justify-center shadow-lg shadow-[#2d9f6c]/15">
-                  <Recycle className="w-5 h-5 text-white" />
-                </div>
+                <Image src="/logo.webp" alt="SIGAP Logo" width={40} height={40} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/15" />
                 <span className="font-headline font-extrabold text-xl tracking-tight text-zinc-900">SIGAP</span>
               </div>
               <p className="text-zinc-500 text-[13px] leading-relaxed">
