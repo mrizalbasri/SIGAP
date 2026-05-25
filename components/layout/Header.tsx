@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Search, Clock, Bell, Menu } from "lucide-react";
 
 interface HeaderProps {
@@ -32,9 +33,18 @@ export default function Header({ activeTab }: HeaderProps) {
         <button className="md:hidden p-1 text-zinc-700 hover:bg-zinc-50 rounded-lg">
           <Menu className="w-6 h-6" />
         </button>
-        <h2 className="text-xl font-bold text-zinc-950 font-sans tracking-tight">
-          {getTitle()}
-        </h2>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.webp"
+            alt="SIGAP Logo"
+            width={64}
+            height={64}
+            className="object-contain"
+          />
+          <h2 className="text-xl font-bold text-zinc-950 font-sans tracking-tight">
+            {getTitle()}
+          </h2>
+        </div>
       </div>
 
       <div className="flex items-center gap-6">

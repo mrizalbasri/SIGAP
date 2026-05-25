@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { 
-  LayoutDashboard, 
-  Map as MapIcon, 
-  Truck, 
-  AlertTriangle, 
-  BarChart3, 
-  Settings, 
+import Image from "next/image";
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  Truck,
+  AlertTriangle,
+  BarChart3,
+  Settings,
   HelpCircle,
-  ShieldAlert,
-  Trash2
+  Trash2,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -37,15 +37,20 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
     <aside className="hidden md:flex bg-white/95 backdrop-blur-xl border-r border-zinc-150 shadow-sm w-[280px] h-screen fixed left-0 top-0 flex-col py-6 z-50 transition-all duration-300">
       {/* Brand Logo */}
       <div className="px-6 py-4 flex items-center space-x-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-[#fff4e6] flex items-center justify-center text-[#df8820]">
-          <ShieldAlert className="w-6 h-6 stroke-[2]" />
-        </div>
+        <Image
+          src="/logo.webp"
+          alt="SIGAP Logo"
+          width={80}
+          height={80}
+          className="object-contain"
+        />
         <div>
-          <h1 className="text-2xl font-black text-[#1a1a1a] tracking-tight font-sans">
-            SIGAP
+          <h1 className="text-2xl font-black tracking-tight font-sans">
+            <span className="text-[#16a34a]">SIG</span>
+            <span className="text-[#df8820]">AP</span>
           </h1>
           <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
-            Armada Pintar DLH
+            Smart Fleet System
           </p>
         </div>
       </div>
@@ -65,7 +70,9 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                   : "text-zinc-500 hover:text-[#df8820] hover:bg-zinc-50"
               }`}
             >
-              <Icon className={`w-5 h-5 stroke-[2] ${isActive ? "text-[#df8820]" : "text-zinc-400"}`} />
+              <Icon
+                className={`w-5 h-5 stroke-[2] ${isActive ? "text-[#df8820]" : "text-zinc-400"}`}
+              />
               <span className="text-sm font-sans">{item.label}</span>
             </button>
           );
