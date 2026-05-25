@@ -181,10 +181,13 @@ export default function LandingPage() {
       <nav className="bg-white/90 backdrop-blur-2xl fixed top-0 w-full z-50 border-b border-zinc-100 shadow-sm">
         <div className="flex justify-between items-center h-[72px] px-6 md:px-12 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <Image src="/logo.webp" alt="SIGAP Logo" width={40} height={40} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/20" />
+            <Image src="/logo.webp" alt="SIGAP Logo" width={48} height={48} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/20" />
             <div className="leading-none">
-              <span className="font-headline text-[22px] font-extrabold text-zinc-900 tracking-tight block">SIGAP</span>
-              <span className="text-[8px] font-bold text-[#2d9f6c] uppercase tracking-[0.2em]">Dinas Lingkungan Hidup</span>
+              <span className="font-headline text-[22px] font-extrabold tracking-tight block">
+                <span className="text-[#16a34a]">SIG</span>
+                <span className="text-[#df8820]">AP</span>
+              </span>
+              <span className="text-[8px] font-bold text-[#2d9f6c] uppercase tracking-[0.2em]">Smart Fleet System</span>
             </div>
           </div>
 
