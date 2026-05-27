@@ -75,24 +75,7 @@ function revealStyle(delay: number) {
   return delay ? { transitionDelay: `${delay}ms` } : undefined;
 }
 
-// ─── Animated Counter Hook ────────────────────────────────────────────────────
 
-function useCounter(end: number, duration = 2200, trigger = false) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!trigger) return;
-    let startTs: number;
-    const step = (ts: number) => {
-      if (!startTs) startTs = ts;
-      const p = Math.min((ts - startTs) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setCount(Math.floor(eased * end));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [end, duration, trigger]);
-  return count;
-}
 
 // ─── Feature Items ────────────────────────────────────────────────────────────
 
@@ -124,53 +107,33 @@ const FEATURES = [
   },
 ];
 
-const TESTIMONIALS = [
-  {
-    name: "Ir. Budi Setiyanto", role: "Kepala Dinas Lingkungan Hidup", org: "DKI Jakarta",
-    text: "SIGAP mengubah cara kami mengelola 1.300+ armada. Efisiensi rute meningkat 40% dalam 3 bulan pertama implementasi.",
-  },
-  {
-    name: "Dewi Rahayu, M.T.", role: "Direktur Operasional", org: "UPST Jakarta Pusat",
-    text: "Dengan live tracking, kami bisa respons pelanggaran dalam hitungan menit — bukan jam seperti sebelumnya.",
-  },
-  {
-    name: "Ahmad Fauzi", role: "Koordinator Dispatcher", org: "TPA Bantar Gebang",
-    text: "Antrean masuk TPA turun dari 45 menit menjadi 14 menit rata-rata. Transformasi nyata di lapangan.",
-  },
-];
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
-  const [countersReady, setCountersReady] = useState(false);
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [heroMounted, setHeroMounted] = useState(false);
 
   const statsReveal = useReveal("up");
   const featuresReveal = useReveal("up");
   const showcaseReveal = useReveal("up");
   const impactReveal = useReveal("up");
-  const testimonialReveal = useReveal("scale");
+  const advantagesReveal = useReveal("up");
   const mobileAppReveal = useReveal("up");
-
-  const fleetCount = useCounter(1369, 2000, countersReady);
-  const tonsDay = useCounter(12400, 2200, countersReady);
-  const accuracy = useCounter(98, 1600, countersReady);
-  const efficiency = useCounter(40, 1400, countersReady);
 
   // ─── Interactive Console Demo States ──────────────────────────────────────────
   const [activeDemoTab, setActiveDemoTab] = useState("map");
   const [optimizeActive, setOptimizeActive] = useState(true);
   const [activeChart, setActiveChart] = useState("waste");
   const [appScreen, setAppScreen] = useState("home");
-  const [reportedIncident, setReportedIncident] = useState<string | null>(null);
+
+  // ─── Video Walkthrough Tab State ──────────────────────────────────────────────
+  const [consoleVideoPlaying, setConsoleVideoPlaying] = useState(false);
+
+  // ─── Keunggulan Carousel State ───────────────────────────────────────────────
+  const [activeAdvantageSlide, setActiveAdvantageSlide] = useState(0);
 
   useEffect(() => { setTimeout(() => setHeroMounted(true), 150); }, []);
-  useEffect(() => { if (statsReveal.visible) setCountersReady(true); }, [statsReveal.visible]);
-  useEffect(() => {
-    const i = setInterval(() => setActiveTestimonial(p => (p + 1) % TESTIMONIALS.length), 6000);
-    return () => clearInterval(i);
-  }, []);
+
 
   return (
     <div className="bg-white font-sans text-zinc-900 min-h-screen flex flex-col selection:bg-[#fff4e6] selection:text-[#df8820]">
@@ -181,7 +144,7 @@ export default function LandingPage() {
       <nav className="bg-white/90 backdrop-blur-2xl fixed top-0 w-full z-50 border-b border-zinc-100 shadow-sm">
         <div className="flex justify-between items-center h-[72px] px-6 md:px-12 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <Image src="/logo.webp" alt="SIGAP Logo" width={48} height={48} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/20" />
+            <Image src="/logo.webp" alt="SIGAP Logo" width={48} height={48} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/20" loading="eager" />
             <div className="leading-none">
               <span className="font-headline text-[22px] font-extrabold tracking-tight block">
                 <span className="text-[#16a34a]">SIG</span>
@@ -192,7 +155,7 @@ export default function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-10">
-            {[["Fitur", "#features"], ["Teknologi", "#tech"], ["Dampak", "#impact"], ["Testimoni", "#testimonials"]].map(([label, href]) => (
+            {[["Fitur", "#features"], ["Teknologi", "#tech"], ["Dampak", "#impact"], ["Keunggulan", "#advantages"]].map(([label, href]) => (
               <a key={label} href={href} className="text-[13px] font-semibold text-zinc-500 hover:text-[#2d9f6c] transition-colors duration-300 relative group">
                 {label}
                 <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-[#2d9f6c] group-hover:w-full transition-all duration-300 rounded-full" />
@@ -219,9 +182,261 @@ export default function LandingPage() {
         {/* ══════════════════════════════════════════════════════════════
             HERO — White background, colored accents
         ══════════════════════════════════════════════════════════════ */}
-        <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-gradient-to-br from-white via-[#f0faf5] to-[#fef8f0]">
+        {/* ══════════════════════════════════════════════════════════════
+            HERO & BENTO GRID — Flowhub Style, SIGAP Colors
+        ══════════════════════════════════════════════════════════════ */}
+        <section className="relative min-h-screen pt-12 pb-24 flex flex-col justify-start overflow-hidden bg-gradient-to-br from-white via-[#f0faf5] to-[#fef8f0] perspective-container">
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+            
+            .perspective-container {
+              perspective: 1200px;
+              transform-style: preserve-3d;
+            }
+
+            @keyframes springBadgePop {
+              0% {
+                opacity: 0;
+                transform: scale(0.4) translateY(-30px);
+              }
+              70% {
+                transform: scale(1.12) translateY(2px);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+              }
+            }
+
+            @keyframes premiumRevealLine {
+              0% {
+                opacity: 0;
+                transform: translateY(115%) rotateX(-12deg) skewY(2deg);
+                filter: blur(4px);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg) skewY(0deg);
+                filter: blur(0);
+              }
+            }
+
+            @keyframes springFadeUp {
+              0% {
+                opacity: 0;
+                transform: translateY(35px) scale(0.96);
+                filter: blur(2px);
+              }
+              70% {
+                transform: translateY(-3px) scale(1.01);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+              }
+            }
+
+            @keyframes springSearchPop {
+              0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9) rotateX(-8deg);
+              }
+              70% {
+                transform: translateY(-5px) scale(1.02) rotateX(1.5deg);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateX(0deg);
+              }
+            }
+
+            @keyframes drawPathSpring {
+              0% {
+                stroke-dashoffset: 300;
+                opacity: 0;
+              }
+              30% {
+                opacity: 1;
+              }
+              100% {
+                stroke-dashoffset: 0;
+                opacity: 1;
+              }
+            }
+
+            @keyframes bounceArrowhead {
+              0% {
+                opacity: 0;
+                transform: scale(0);
+              }
+              70% {
+                transform: scale(1.3);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+
+            @keyframes bentoSpringLeft {
+              0% {
+                opacity: 0;
+                transform: translateX(-40px) translateY(40px) rotateY(-12deg) scale(0.94);
+              }
+              70% {
+                transform: translateX(3px) translateY(-3px) rotateY(1deg) scale(1.015);
+              }
+              100% {
+                opacity: 1;
+                transform: translateX(0) translateY(0) rotateY(0deg) scale(1);
+              }
+            }
+
+            @keyframes bentoSpringCenter {
+              0% {
+                opacity: 0;
+                transform: translateY(70px) rotateX(-10deg) scale(0.92);
+              }
+              70% {
+                transform: translateY(-5px) rotateX(1.5deg) scale(1.02);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg) scale(1);
+              }
+            }
+
+            @keyframes bentoSpringRight {
+              0% {
+                opacity: 0;
+                transform: translateX(40px) translateY(40px) rotateY(12deg) scale(0.94);
+              }
+              70% {
+                transform: translateX(-3px) translateY(-3px) rotateY(-1deg) scale(1.015);
+              }
+              100% {
+                opacity: 1;
+                transform: translateX(0) translateY(0) rotateY(0deg) scale(1);
+              }
+            }
+
+            @keyframes bentoStackCard1 {
+              0% {
+                opacity: 0;
+                transform: translateY(50px) rotate(-8deg) scale(0.85);
+              }
+              75% {
+                transform: translateY(-4px) rotate(-3deg) scale(1.01);
+              }
+              100% {
+                opacity: 0.85;
+                transform: translateY(0) rotate(-2deg) scale(1);
+              }
+            }
+
+            @keyframes bentoStackCard2 {
+              0% {
+                opacity: 0;
+                transform: translateY(70px) rotate(8deg) scale(0.85);
+              }
+              75% {
+                transform: translateY(-4px) rotate(3deg) scale(1.01);
+              }
+              100% {
+                opacity: 0.95;
+                transform: translateY(0) rotate(2deg) scale(1);
+              }
+            }
+
+            @keyframes bentoStackForeground {
+              0% {
+                opacity: 0;
+                transform: translateY(90px) rotateX(-8deg) scale(0.9);
+              }
+              75% {
+                transform: translateY(-5px) rotateX(1.5deg) scale(1.02);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg) scale(1);
+              }
+            }
+
+            @keyframes ringPulseOut {
+              0% {
+                transform: scale(1);
+                opacity: 0.6;
+              }
+              100% {
+                transform: scale(2.6);
+                opacity: 0;
+              }
+            }
+
+            .badge-ripple::after {
+              content: '';
+              position: absolute;
+              inset: -4px;
+              border-radius: 9999px;
+              border: 1px solid rgba(45, 159, 108, 0.4);
+              animation: ringPulseOut 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+            }
+
+            .animate-badge-pop {
+              animation: springBadgePop 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-reveal-line {
+              animation: premiumRevealLine 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+            }
+
+            .animate-spring-fade-up {
+              animation: springFadeUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-search-spring {
+              animation: springSearchPop 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-bento-spring-left {
+              animation: bentoSpringLeft 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-bento-spring-center {
+              animation: bentoSpringCenter 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-bento-spring-right {
+              animation: bentoSpringRight 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-stack-card-1 {
+              animation: bentoStackCard1 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-stack-card-2 {
+              animation: bentoStackCard2 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-stack-foreground {
+              animation: bentoStackForeground 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+
+            .animate-draw-path-spring {
+              stroke-dasharray: 300;
+              stroke-dashoffset: 300;
+              animation: drawPathSpring 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+
+            .animate-arrowhead-bounce {
+              transform-origin: center;
+              animation: bounceArrowhead 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+          `}</style>
+
           {/* Decorative background elements */}
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Soft gradient orbs */}
             <div className="absolute top-[10%] right-[5%] w-[500px] h-[500px] bg-[#2d9f6c] rounded-full blur-[200px] opacity-[0.06] animate-float-slow" />
             <div className="absolute bottom-[10%] left-[10%] w-[400px] h-[400px] bg-[#df8820] rounded-full blur-[180px] opacity-[0.05] animate-float" />
@@ -236,151 +451,324 @@ export default function LandingPage() {
             <div className="absolute bottom-[20%] left-[8%] w-28 h-28 border-2 border-[#df8820]/10 rounded-full animate-float" />
           </div>
 
-          <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full py-16 grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left: Copy */}
-            <div className="space-y-8">
-              {/* Live badge */}
-              <div className={`transition-all duration-700 ${heroMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-                <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-[#ebf7f2] border border-[#2d9f6c]/15 text-[#2d9f6c] w-fit">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2d9f6c] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2d9f6c]" />
-                  </span>
-                  <span className="text-[11px] font-bold tracking-[0.15em] uppercase">Sistem Aktif • Real-Time Jakarta</span>
-                </div>
+          <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full pt-16 flex flex-col items-center">
+            
+            {/* Top Badge */}
+            <div className={`mb-6 ${heroMounted ? "animate-badge-pop" : "opacity-0"}`} style={{ animationDelay: "150ms" }}>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#ebf7f2]/70 backdrop-blur-md border border-[#2d9f6c]/20 text-[#2d9f6c] text-[10px] font-extrabold tracking-wider uppercase shadow-[0_2px_15px_rgba(45,159,108,0.06)] hover:bg-[#ebf7f2] transition-colors cursor-default relative badge-ripple">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2d9f6c] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2d9f6c]" />
+                </span>
+                <span>Sistem Aktif • Real-Time Jakarta</span>
               </div>
+            </div>
 
-              {/* Headline */}
-              <div className="space-y-5">
-                <h1 className={`font-headline text-[2.8rem] sm:text-[3.5rem] lg:text-[4.2rem] font-extrabold leading-[1.08] tracking-[-0.03em] text-zinc-900 transition-all duration-1000 ${heroMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                  style={{ transitionDelay: "200ms" }}
-                >
-                  Revolusi{" "}
-                  <span className="text-gradient-orange">Manajemen</span>
-                  <br />
-                  <span className="text-gradient-green">Armada</span>{" "}
-                  Ibu Kota
-                </h1>
+            {/* Centered Headline */}
+            <div className="text-center max-w-4xl mx-auto space-y-6 relative z-10">
+              <h1 className="font-headline text-[2.8rem] sm:text-[4rem] lg:text-[4.8rem] font-extrabold leading-[1.08] tracking-[-0.03em] text-zinc-900 flex flex-col items-center select-none">
+                <span className="block overflow-hidden h-full pb-1">
+                  <span className={`block ${heroMounted ? "animate-reveal-line" : "opacity-0"}`} style={{ animationDelay: "280ms" }}>
+                    Revolusi <span className="text-gradient-orange">Manajemen</span>
+                  </span>
+                </span>
+                <span className="block overflow-hidden h-full pb-1 mt-1">
+                  <span className={`block ${heroMounted ? "animate-reveal-line" : "opacity-0"}`} style={{ animationDelay: "450ms" }}>
+                    <span className="text-gradient-green">Armada</span> Ibu Kota
+                  </span>
+                </span>
+              </h1>
 
-                <p className={`text-[16px] sm:text-[17px] text-zinc-500 leading-[1.8] max-w-lg transition-all duration-1000 ${heroMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                  style={{ transitionDelay: "400ms" }}
+              <div className="overflow-hidden">
+                <p className={`text-[16px] sm:text-[18px] text-zinc-500 leading-[1.8] max-w-2xl mx-auto ${heroMounted ? "animate-spring-fade-up" : "opacity-0"}`}
+                  style={{ animationDelay: "580ms" }}
                 >
                   Monitor, integrasi, dan optimalisasi pergerakan <strong className="text-zinc-700 font-semibold">1.369 armada kebersihan</strong> DKI Jakarta secara real-time dengan teknologi AI dan Mobile App.
                 </p>
               </div>
-
-              {/* CTAs */}
-              <div className={`flex flex-wrap gap-4 transition-all duration-1000 ${heroMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                style={{ transitionDelay: "600ms" }}
-              >
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2.5 px-8 py-4 bg-[#2d9f6c] text-white font-bold rounded-2xl shadow-[0_8px_30px_rgba(45,159,108,0.3)] hover:bg-[#24855a] hover:shadow-[0_16px_40px_rgba(45,159,108,0.35)] hover:-translate-y-1 transition-all duration-400 text-[14px]"
-                >
-                  Eksplorasi Dashboard <ArrowRight className="w-4 h-4" />
-                </Link>
-                <button className="flex items-center gap-2.5 px-8 py-4 bg-white text-zinc-700 font-bold rounded-2xl border border-zinc-200 hover:border-[#df8820]/40 hover:text-[#df8820] hover:shadow-lg transition-all duration-300 text-[14px] group shadow-sm">
-                  <PlayCircle className="w-5 h-5 text-[#df8820] group-hover:scale-110 transition-transform" />
-                  Tonton Demo
-                </button>
-              </div>
-
-              {/* Social proof */}
-              <div className={`flex items-center gap-5 transition-all duration-1000 ${heroMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                style={{ transitionDelay: "800ms" }}
-              >
-                <div className="flex -space-x-2.5">
-                  {["BP", "EP", "KD", "RH", "AG"].map((init, i) => (
-                    <div key={i}
-                      className="w-9 h-9 rounded-full border-[2.5px] border-white flex items-center justify-center text-[10px] font-extrabold text-white shadow-md transition-transform hover:scale-110 hover:z-10"
-                      style={{ backgroundColor: ["#2d9f6c","#df8820","#3b82f6","#2d9f6c","#df8820"][i] }}
-                    >
-                      {init}
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="flex gap-0.5 mb-1">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-[#df8820] text-[#df8820]" />)}
-                  </div>
-                  <p className="text-[11px] text-zinc-400 font-semibold">Dipercaya <strong className="text-zinc-600">200+ dispatcher</strong> DLH Jakarta</p>
-                </div>
-              </div>
             </div>
 
-            {/* Right: Light Glass Dashboard Preview */}
-            <div className={`hidden lg:flex flex-col gap-4 transition-all duration-1000 ${heroMounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-16"}`}
-              style={{ transitionDelay: "500ms" }}
-            >
-              {/* Main card */}
-              <div className="bg-white rounded-3xl p-6 shadow-xl border border-zinc-100 animate-float-slow">
-                <div className="flex items-center justify-between mb-5">
-                  <div>
-                    <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Command Center</p>
-                    <p className="text-zinc-900 font-headline font-extrabold text-lg tracking-tight">Status Armada Live</p>
-                  </div>
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ebf7f2] text-[#2d9f6c] text-[9px] font-extrabold rounded-full uppercase tracking-[0.15em] border border-[#2d9f6c]/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2d9f6c] animate-pulse" />
-                    Live
-                  </span>
-                </div>
+            {/* Bento Feature Grid (3 Columns with Mathematical Height Alignment - 410px) */}
+            <div className="mt-20 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start text-left relative">
+              <style>{`
+                @keyframes routeFlow {
+                  0% { stroke-dashoffset: 300; }
+                  100% { stroke-dashoffset: 0; }
+                }
+                .animate-route-flow {
+                  animation: routeFlow 7s linear infinite;
+                }
+                @keyframes chevronPulse {
+                  0%, 100% { opacity: 0.2; transform: translateX(0); }
+                  50% { opacity: 1; transform: translateX(4px); }
+                }
+                .chevron-pulse-1 { animation: chevronPulse 1.5s infinite 0.1s; }
+                .chevron-pulse-2 { animation: chevronPulse 1.5s infinite 0.3s; }
+                .chevron-pulse-3 { animation: chevronPulse 1.5s infinite 0.5s; }
+              `}</style>
 
-                <div className="grid grid-cols-3 gap-2.5 mb-4">
-                  {[
-                    { label: "Aktif", val: "892", c: "#2d9f6c", bg: "bg-[#ebf7f2]" },
-                    { label: "Pelanggaran", val: "22", c: "#ef4444", bg: "bg-red-50" },
-                    { label: "Idle", val: "331", c: "#df8820", bg: "bg-[#fff4e6]" },
-                  ].map((s, i) => (
-                    <div key={i} className={`${s.bg} rounded-2xl p-3 text-center border border-zinc-100 hover:shadow-md transition-shadow`}>
-                      <p className="text-xl font-headline font-extrabold tracking-tight" style={{ color: s.c }}>{s.val}</p>
-                      <p className="text-[8px] text-zinc-400 font-bold tracking-[0.1em] uppercase mt-0.5">{s.label}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {[
-                  { truk: "B-5566-DLH", info: "Zone C → Bantar Gebang • 45 km/h", status: "ON ROUTE", c: "#2d9f6c", bg: "bg-[#ebf7f2]" },
-                  { truk: "B-7722-DLH", info: "Tol Slipi — Kecepatan 85 km/h", status: "VIOLATION", c: "#ef4444", bg: "bg-red-50" },
-                  { truk: "B-9988-DLH", info: "Menteng — Idle 35 menit", status: "IDLE", c: "#df8820", bg: "bg-[#fff4e6]" },
-                ].map((t, i) => (
-                  <div key={i} className="flex items-center justify-between py-2.5 border-t border-zinc-100 group hover:bg-zinc-50/50 transition-colors rounded-lg px-1">
-                    <div className="min-w-0">
-                      <p className="text-zinc-800 text-[12px] font-extrabold font-mono tracking-wide">{t.truk}</p>
-                      <p className="text-zinc-400 text-[10px] truncate">{t.info}</p>
-                    </div>
-                    <span className={`text-[8px] font-extrabold px-2.5 py-1 rounded-lg shrink-0 tracking-wider uppercase ${t.bg}`} style={{ color: t.c }}>
-                      {t.status}
+              {/* Kolom 1: Shift & Rencana Perjalanan (Total Height = 410px) */}
+              <div className="flex flex-col gap-5 w-full">
+                
+                {/* Card 1: Jadwal Shift & Rencana Perjalanan (Height: 410px) */}
+                <div className={`bg-gradient-to-b from-white to-zinc-50/50 rounded-[32px] p-6 shadow-[0_15px_30px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.02)] border border-zinc-100/80 flex flex-col justify-between h-[410px] hover:shadow-[0_25px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden ${heroMounted ? "animate-bento-spring-left" : "opacity-0"}`} style={{ animationDelay: "800ms" }}>
+                  <div className="absolute top-0 right-0 h-1.5 w-full bg-gradient-to-r from-[#2d9f6c]/20 via-[#2d9f6c] to-[#2d9f6c]/20 group-hover:from-[#2d9f6c] group-hover:to-[#2d9f6c] transition-all duration-500" />
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#2d9f6c] bg-[#ebf7f2] px-3.5 py-1.5 rounded-full border border-[#2d9f6c]/15">
+                      Jadwal Shift
+                    </span>
+                    <span className="text-[9px] font-extrabold text-[#2d9f6c] bg-[#ebf7f2] px-3 py-1 rounded-full flex items-center gap-1.5 border border-[#2d9f6c]/20">
+                      <span className="w-2 h-2 rounded-full bg-[#2d9f6c] relative flex">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2d9f6c] opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2d9f6c]"></span>
+                      </span>
+                      Shift Aktif
                     </span>
                   </div>
-                ))}
+
+                  <div>
+                    <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest leading-none">ARMADA JALUR C</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-headline font-extrabold text-zinc-950 font-mono tracking-tight leading-none bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-xl shadow-inner">
+                        B-1234-DLH
+                      </span>
+                      <span className="text-[10px] text-zinc-500 font-semibold px-2 py-0.5 bg-zinc-100 rounded-md">Truk Compactor</span>
+                    </div>
+                  </div>
+
+                  {/* Shift Progress & Time */}
+                  <div className="py-4 border-y border-zinc-100/80 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-[18px] font-extrabold text-zinc-800 leading-none tracking-tight">Senin, 8 Mar</p>
+                        <p className="text-[11px] text-zinc-500 font-semibold mt-1.5 flex items-center gap-2">
+                          <Clock className="w-4.5 h-4.5 text-[#df8820] shrink-0" /> Shift Pagi: <span className="font-bold text-zinc-700">06:00 – 12:00 WIB</span>
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] font-extrabold text-[#2d9f6c] bg-[#ebf7f2] px-2.5 py-1 rounded-lg border border-[#2d9f6c]/10">75% Selesai</span>
+                      </div>
+                    </div>
+                    
+                    {/* Shift progress bar */}
+                    <div className="space-y-1.5">
+                      <div className="h-2 bg-zinc-100 rounded-full overflow-hidden border border-zinc-200/50 p-[1px]">
+                        <div className="h-full bg-gradient-to-r from-[#2d9f6c] to-[#10b981] rounded-full transition-all duration-500 relative" style={{ width: "75%" }}>
+                          <span className="absolute right-0 top-0 w-1.5 h-1.5 bg-white rounded-full my-[1px] mx-[1px] animate-ping" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tasks / Stops list */}
+                  <div className="space-y-2">
+                    <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Rencana Perjalanan</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2.5 text-[11px] text-zinc-400 font-medium">
+                        <div className="w-4 h-4 rounded-full bg-[#ebf7f2] border border-[#2d9f6c]/30 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#2d9f6c]" />
+                        </div>
+                        <span className="line-through decoration-zinc-300">TPS Kebon Sirih (Selesai • 06:45)</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-[11px] text-zinc-400 font-medium">
+                        <div className="w-4 h-4 rounded-full bg-[#ebf7f2] border border-[#2d9f6c]/30 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#2d9f6c]" />
+                        </div>
+                        <span className="line-through decoration-zinc-300">TPS Menteng Dalam (Selesai • 08:30)</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-[11px] text-zinc-800 font-bold bg-[#fff4e6]/60 border border-[#df8820]/15 p-1.5 pr-2.5 rounded-xl">
+                        <span className="w-4 h-4 rounded-full border-2 border-[#df8820] flex items-center justify-center shrink-0 bg-white">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#df8820] animate-pulse" />
+                        </span>
+                        <span className="truncate">TPA Bantar Gebang (Timbang Muatan)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 pt-3.5 border-t border-zinc-100/80">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#df8820] to-[#f59e0b] border-2 border-white shadow-md flex items-center justify-center text-[11px] font-extrabold text-white shrink-0">
+                      BP
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[9px] text-zinc-400 font-bold leading-none uppercase tracking-wide">Supir Terdaftar</p>
+                      <p className="text-[12px] font-extrabold text-zinc-800 mt-1 leading-none truncate">Bambang Pamungkas</p>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      setActiveDemoTab("map");
+                      setConsoleVideoPlaying(false);
+                      const el = document.getElementById("tech");
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="w-full text-center py-3 bg-gradient-to-r from-[#2d9f6c] to-[#10b981] hover:from-[#228659] hover:to-[#059669] text-white font-extrabold text-[11px] rounded-xl shadow-md shadow-[#2d9f6c]/10 hover:shadow-lg hover:shadow-[#2d9f6c]/20 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer uppercase tracking-wider"
+                  >
+                    Verifikasi Lokasi Truk
+                  </button>
+                </div>
+
               </div>
 
-              {/* Alert mini card */}
-              <div className="bg-red-50 border border-red-100 rounded-2xl p-4 flex items-center gap-3.5 shadow-md animate-float" style={{ animationDelay: "2s" }}>
-                <div className="p-2 bg-white rounded-xl shrink-0 shadow-sm">
-                  <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-zinc-800 text-[12px] font-extrabold">Pelanggaran Terdeteksi</p>
-                  <p className="text-red-400 text-[10px] truncate">B-7722-DLH — Kecepatan 85 km/h di Tol Slipi</p>
-                </div>
-                <span className="text-[8px] font-extrabold text-red-500 bg-white px-2.5 py-1 rounded-lg shrink-0 animate-pulse tracking-wider border border-red-100">BARU</span>
-              </div>
+              {/* Kolom 2: 10X AI (Height: 410px) */}
+              <div className="w-full">
+                
+                {/* Card 2: 10X AI Optimization (Height: 410px) */}
+                <div className={`bg-gradient-to-b from-white to-zinc-50/50 rounded-[32px] p-7 shadow-[0_15px_30px_rgba(0,0,0,0.03),0_1px_2px_rgba(0,0,0,0.02)] border border-zinc-100/80 flex flex-col justify-between h-[410px] hover:shadow-[0_25px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden ${heroMounted ? "animate-bento-spring-center" : "opacity-0"}`} style={{ animationDelay: "1100ms" }}>
+                  <div className="absolute top-0 right-0 h-1.5 w-full bg-gradient-to-r from-[#df8820]/20 via-[#df8820] to-[#df8820]/20 group-hover:from-[#df8820] group-hover:to-[#df8820] transition-all duration-500" />
+                  
+                  {/* Glowing AI Neural Map Background Visual */}
+                  <div className="absolute top-[80px] right-4 w-[240px] h-[140px] opacity-75 group-hover:opacity-90 transition-opacity duration-300 pointer-events-none">
+                    <svg width="100%" height="100%" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <pattern id="ai-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <circle cx="2" cy="2" r="1" fill="#e2e8f0" />
+                        </pattern>
+                        <linearGradient id="path-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#2d9f6c" />
+                          <stop offset="100%" stopColor="#df8820" />
+                        </linearGradient>
+                      </defs>
+                      <rect width="100%" height="100%" fill="url(#ai-grid)" opacity="0.4" />
+                      
+                      {/* Route Connections */}
+                      <path d="M20,100 L80,40 L160,80 L220,20" stroke="url(#path-grad)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="6 6" />
+                      
+                      {/* Animated Glowing Active Path */}
+                      <path d="M20,100 L80,40 L160,80 L220,20" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="300" strokeDashoffset="300" className="animate-route-flow" />
+                      
+                      {/* Node Circles */}
+                      <circle cx="20" cy="100" r="4.5" fill="#ebf7f2" stroke="#2d9f6c" strokeWidth="2" />
+                      <circle cx="80" cy="40" r="4.5" fill="#fff4e6" stroke="#df8820" strokeWidth="2" />
+                      <circle cx="160" cy="80" r="4.5" fill="#ebf7f2" stroke="#2d9f6c" strokeWidth="2" />
+                      <circle cx="220" cy="20" r="4.5" fill="#e0f2fe" stroke="#0a51a1" strokeWidth="2" />
+                      
+                      {/* Halo Pulsing around Node */}
+                      <circle cx="160" cy="80" r="10" stroke="#2d9f6c" strokeWidth="1" opacity="0.5" className="animate-ping" style={{ transformOrigin: "160px 80px" }} />
+                      <circle cx="80" cy="40" r="10" stroke="#df8820" strokeWidth="1" opacity="0.5" className="animate-ping" style={{ transformOrigin: "80px 40px", animationDelay: "0.5s" }} />
+                    </svg>
+                  </div>
 
-              {/* Efficiency mini card */}
-              <div className="bg-[#ebf7f2] border border-[#2d9f6c]/15 rounded-2xl p-4 flex items-center gap-3.5 shadow-md animate-float" style={{ animationDelay: "4s" }}>
-                <div className="p-2 bg-white rounded-xl shrink-0 shadow-sm">
-                  <TrendingUp className="w-5 h-5 text-[#2d9f6c]" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-zinc-800 text-[12px] font-extrabold">Efisiensi Rute Meningkat</p>
-                  <div className="w-full h-1.5 bg-white rounded-full mt-2 overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#2d9f6c] to-[#4ade80] rounded-full" style={{ width: "91%", animation: "count-up-bar 2s ease-out both", animationDelay: "1s" }} />
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#df8820] bg-[#fff4e6] px-3.5 py-1.5 rounded-full border border-[#df8820]/15">
+                      Kecerdasan AI
+                    </span>
+                    <div className="flex items-center gap-1 mt-8 relative z-10">
+                      <p className="text-7xl sm:text-8xl font-headline font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-[#2d9f6c] to-[#10b981] tracking-tighter leading-none filter drop-shadow-sm select-none">
+                        10X
+                      </p>
+                      <div className="flex -space-x-1 mt-2">
+                        <ChevronRight className="w-8 h-8 text-[#df8820] shrink-0 chevron-pulse-1" />
+                        <ChevronRight className="w-8 h-8 text-[#df8820] shrink-0 chevron-pulse-2" />
+                        <ChevronRight className="w-8 h-8 text-[#df8820] shrink-0 chevron-pulse-3" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10">
+                    <p className="text-[14px] text-zinc-500 font-semibold leading-relaxed">
+                      Optimalisasi rute truk pengangkutan sampah secara otomatis berbasis algoritma kecerdasan buatan dinamis.
+                    </p>
+                    <div className="mt-6 w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden border border-zinc-200/50 p-[1px]">
+                      <div className="h-full bg-gradient-to-r from-[#2d9f6c] via-[#10b981] to-[#059669] rounded-full transition-all duration-500 relative" style={{ width: "91%" }}>
+                        <span className="absolute right-0 top-0 w-2 h-2 bg-white rounded-full my-[1px] mx-[1px] animate-ping" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-3">
+                      <p className="text-[9.5px] text-zinc-400 font-extrabold uppercase tracking-wider">Efisiensi Rute</p>
+                      <span className="text-[11px] font-extrabold text-[#2d9f6c] bg-[#ebf7f2] px-2.5 py-0.5 rounded-md border border-[#2d9f6c]/10">
+                        91% MENINGKAT
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span className="text-[#2d9f6c] font-headline font-extrabold text-base tracking-tight">91%</span>
+
+              </div>
+
+              {/* Kolom 3: Stacked Aduan JAKI (Height: 410px Container, perfectly responsive with % widths) */}
+              <div className="w-full h-[410px] relative">
+                
+                {/* Background card 1 (Timbangan Bantar Gebang) - Mint green (88% Width, Centered) */}
+                <div className={`absolute top-2 left-1/2 -translate-x-[48%] w-[88%] h-[120px] bg-gradient-to-br from-[#ebf7f2] to-[#dcfce7] border border-[#2d9f6c]/25 rounded-[24px] p-5 shadow-[0_10px_25px_rgba(45,159,108,0.05)] transform rotate-[-2.5deg] hover:rotate-0 hover:-translate-y-2 transition-all duration-500 backdrop-blur-md ${heroMounted ? "animate-stack-card-1" : "opacity-0"}`} style={{ animationDelay: "1200ms" }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[9px] font-extrabold text-[#2d9f6c] uppercase tracking-[0.12em] bg-white px-2.5 py-1 rounded-full border border-[#2d9f6c]/15">Timbangan Bantar Gebang</span>
+                    <span className="text-[8px] text-[#2d9f6c] font-bold tracking-wider flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-[#2d9f6c] rounded-full animate-ping" />
+                      LIVE
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px] font-semibold text-zinc-700 mt-2">
+                    <div>
+                      <p className="text-[8px] text-zinc-400 font-bold uppercase leading-none mb-1">Armada</p>
+                      <p className="font-mono text-zinc-800 font-extrabold">B-5566-DLH</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[8px] text-zinc-400 font-bold uppercase leading-none mb-1">Berat Muatan</p>
+                      <p className="text-[#2d9f6c] font-extrabold text-[12.5px]">8.42 Ton</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Background card 2 (Rerouting AI) - Yellow (92% Width, Centered) */}
+                <div className={`absolute top-12 left-1/2 -translate-x-[49%] w-[92%] h-[120px] bg-gradient-to-br from-[#fff4e6] to-[#fef3c7] border border-[#df8820]/25 rounded-[24px] p-5 shadow-[0_12px_30px_rgba(223,136,32,0.06)] transform rotate-[2.5deg] hover:rotate-0 hover:-translate-y-2 transition-all duration-500 backdrop-blur-md ${heroMounted ? "animate-stack-card-2" : "opacity-0"}`} style={{ animationDelay: "1300ms" }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[9px] font-extrabold text-[#df8820] uppercase tracking-[0.12em] bg-white px-2.5 py-1 rounded-full border border-[#df8820]/15">Rerouting AI</span>
+                    <span className="w-2 h-2 rounded-full bg-[#df8820] relative flex">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#df8820] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#df8820]"></span>
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px] font-semibold text-zinc-700 mt-2">
+                    <div>
+                      <p className="text-[8px] text-zinc-400 font-bold uppercase leading-none mb-1">Armada</p>
+                      <p className="font-mono text-zinc-800 font-extrabold">B-1234-DLH</p>
+                    </div>
+                    <div className="text-right flex flex-col items-end">
+                      <p className="text-[8px] text-zinc-400 font-bold uppercase leading-none mb-1">Bypass Macet</p>
+                      <span className="text-[#2d9f6c] font-extrabold text-[10px] flex items-center gap-0.5">
+                        <TrendingUp className="w-3.5 h-3.5 text-[#2d9f6c]" /> -12 Menit
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Foreground Card: Aduan JAKI (100% Width, Fits column perfectly, height 314px) */}
+                <div className={`absolute top-[96px] left-1/2 -translate-x-1/2 w-full h-[314px] bg-gradient-to-b from-white to-zinc-50/50 border border-zinc-100 rounded-[32px] p-6 shadow-[0_25px_60px_rgba(10,81,161,0.08),0_4px_12px_rgba(10,81,161,0.02)] z-10 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(10,81,161,0.14)] transition-all duration-300 flex flex-col justify-between group overflow-hidden ${heroMounted ? "animate-stack-foreground" : "opacity-0"}`} style={{ animationDelay: "1400ms" }}>
+                  <div className="absolute top-0 right-0 h-1.5 w-full bg-gradient-to-r from-[#0a51a1]/20 via-[#0a51a1] to-[#0a51a1]/20 group-hover:from-[#0a51a1] group-hover:to-[#0a51a1] transition-all duration-500" />
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-[#0a51a1] to-[#3b82f6] shadow-sm flex items-center justify-center text-[11px] font-extrabold text-white">
+                        J
+                      </div>
+                      <span className="text-[10px] font-extrabold text-[#0a51a1] tracking-[0.08em] uppercase">Aduan JAKI</span>
+                    </div>
+                    <span className="text-[9px] font-extrabold text-white bg-[#df8820] px-3 py-1 rounded-full uppercase tracking-wider shadow-sm animate-pulse">
+                      BARU
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2 mt-4 flex-1">
+                    <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest leading-none">Laporan Warga</p>
+                    <p className="text-[13.5px] font-extrabold text-zinc-800 leading-snug group-hover:text-zinc-900 transition-colors">
+                      Tumpukan sampah liar di trotoar Sudirman dekat Stasiun MRT
+                    </p>
+                  </div>
+                  
+                  <div className="py-3.5 border-t border-zinc-100 flex justify-between items-center text-[11px] font-semibold text-zinc-700 mt-2">
+                    <div>
+                      <p className="text-[8px] text-zinc-400 font-bold uppercase leading-none mb-1">Masuk</p>
+                      <p className="text-zinc-800 font-extrabold font-mono">Pukul 09:23 WIB</p>
+                    </div>
+                    <span className="text-[9px] font-extrabold text-[#2d9f6c] bg-[#ebf7f2] px-3.5 py-1.5 rounded-xl border border-[#2d9f6c]/15 shadow-sm">
+                      Disposisi C-12
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </section>
 
@@ -393,10 +781,10 @@ export default function LandingPage() {
 
           <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 relative z-10">
             {[
-              { value: fleetCount.toLocaleString("id-ID"), label: "Total Armada" },
-              { value: `${(tonsDay / 1000).toFixed(1)}k`, label: "Ton Sampah / Hari" },
-              { value: `${accuracy}%`, label: "Ketepatan Rute" },
-              { value: `+${efficiency}%`, label: "Efisiensi Operasional" },
+              { value: "1.369", label: "Total Armada" },
+              { value: "12.4k", label: "Ton Sampah / Hari" },
+              { value: "98%", label: "Ketepatan Rute" },
+              { value: "+40%", label: "Efisiensi Operasional" },
             ].map((s, i) => (
               <div key={i} className={`text-center group ${revealClass(statsReveal.visible, "scale")}`} style={revealStyle(i * 120)}>
                 <p className="font-headline text-5xl sm:text-[3.5rem] font-extrabold tracking-[-0.04em] text-white transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
@@ -414,9 +802,6 @@ export default function LandingPage() {
         <section id="features" ref={featuresReveal.ref} className="py-28 px-6 md:px-12 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className={`text-center mb-20 max-w-2xl mx-auto ${revealClass(featuresReveal.visible, "up")}`}>
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ebf7f2] text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6">
-                <Zap className="w-3.5 h-3.5" /> Fitur Unggulan
-              </div>
               <h2 className="font-headline text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] text-zinc-900 mb-5 leading-[1.1]">
                 Semua yang Anda butuhkan
                 <br />
@@ -444,9 +829,6 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="text-center mb-16 max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#fff4e6] text-[#df8820] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-5">
-                <Brain className="w-3.5 h-3.5" /> Konsol Demo Interaktif
-              </div>
               <h2 className="font-headline text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] text-zinc-900 mb-5 leading-[1.1]">
                 Coba teknologi <span className="text-gradient-orange">SIGAP</span> secara langsung
               </h2>
@@ -461,7 +843,7 @@ export default function LandingPage() {
                 { id: "map", label: "Live GPS Tracking", desc: "Pantauan Real-time", icon: MapPin },
                 { id: "route", label: "AI Route Optimizer", desc: "Bypass Kemacetan", icon: Navigation },
                 { id: "analytics", label: "Smart Analytics", desc: "Metrik & Efisiensi", icon: BarChart3 },
-                { id: "app", label: "Driver Mobile App", desc: "Simulator Pengemudi", icon: Smartphone },
+                { id: "walkthrough", label: "Video Walkthrough", desc: "Panduan Ekosistem", icon: PlayCircle },
               ].map((tab) => {
                 const TabIcon = tab.icon;
                 const isActive = activeDemoTab === tab.id;
@@ -470,9 +852,8 @@ export default function LandingPage() {
                     key={tab.id}
                     onClick={() => {
                       setActiveDemoTab(tab.id);
-                      if (tab.id === "app") {
-                        setAppScreen("home");
-                        setReportedIncident(null);
+                      if (tab.id === "walkthrough") {
+                        setConsoleVideoPlaying(false);
                       }
                     }}
                     className={`flex items-center gap-3 px-6 py-4 rounded-2xl border text-left transition-all duration-300 ${
@@ -615,209 +996,68 @@ export default function LandingPage() {
                   </div>
                 )}
 
-                {/* ─── TAB 4: MOBILE DRIVER APP SIMULATOR ─── */}
-                {activeDemoTab === "app" && (
-                  <div className="absolute inset-0 p-6 flex items-center justify-center h-full bg-zinc-150/40">
-                    
-                    {/* iPhone Simulator Frame */}
-                    <div className="w-[230px] h-[390px] bg-white border-[6px] border-zinc-900 rounded-[32px] shadow-2xl relative overflow-hidden flex flex-col font-sans shrink-0">
-                      {/* iPhone notch speaker & camera */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-4 bg-zinc-900 rounded-b-xl z-35 flex items-center justify-center">
-                        <div className="w-10 h-1 bg-zinc-800 rounded-full" />
-                      </div>
-
-                      {/* iPhone Screen Header */}
-                      <div className="bg-[#2d9f6c] pt-5 pb-3.5 px-4 text-white text-left z-20 shrink-0">
-                        <div className="flex justify-between items-center text-[9px] font-bold opacity-85 mb-1.5">
-                          <span>09:41</span>
-                          <span className="flex items-center gap-1">
-                            <Wifi className="w-2.5 h-2.5" /> LTE
-                          </span>
-                        </div>
-                        <h5 className="font-extrabold text-[12px] tracking-tight">SIGAP Mobile</h5>
-                        <p className="text-[7.5px] opacity-80 mt-0.5">Aplikasi Pengemudi Kebersihan</p>
-                      </div>
-
-                      {/* Screen Dynamic Body */}
-                      <div className="flex-1 bg-zinc-50 p-3 overflow-y-auto text-left flex flex-col justify-between">
+                {/* ─── TAB 4: WALKTHROUGH VIDEO ─── */}
+                {activeDemoTab === "walkthrough" && (
+                  <div className="absolute inset-0 p-6 flex flex-col justify-between h-full bg-zinc-950 text-white rounded-2xl overflow-hidden shadow-inner border border-zinc-900">
+                    {!consoleVideoPlaying ? (
+                      // Walkthrough Video Cover Image / State
+                      <div 
+                        onClick={() => setConsoleVideoPlaying(true)}
+                        className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center cursor-pointer group"
+                      >
+                        {/* Backdrop city art simulation */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-zinc-900/60 z-0" />
+                        <div className="absolute inset-0 z-0 opacity-10 bg-cover bg-center" style={{ backgroundImage: "url('/logo.webp')" }} />
                         
-                        {/* SCREEN 1: APP HOME SCREEN */}
-                        {appScreen === "home" && (
-                          <div className="flex flex-col gap-2.5 h-full justify-between">
-                            <div className="space-y-2">
-                              <div className="bg-white border border-zinc-200 p-2.5 rounded-xl shadow-xs">
-                                <span className="text-[7.5px] font-bold text-zinc-400 uppercase tracking-wider block">Profil Driver</span>
-                                <p className="font-extrabold text-[11px] text-zinc-800">Bambang Pamungkas</p>
-                                <p className="text-[8px] text-zinc-400 font-mono mt-0.5">ID: B-5566-DLH • Zone C</p>
-                              </div>
-                              
-                              <div className="bg-white border border-zinc-200 p-2.5 rounded-xl shadow-xs space-y-1.5">
-                                <span className="text-[7.5px] font-bold text-[#df8820] uppercase tracking-wider block">Tugas Hari Ini</span>
-                                <p className="font-extrabold text-[10px] text-zinc-700 leading-tight">Pengangkutan Sampah Zone C → TPA Bantar Gebang</p>
-                                <div className="flex items-center gap-1.5 text-[8.5px] text-zinc-500">
-                                  <Clock className="w-3 h-3 shrink-0" />
-                                  <span>07:00 - 15:00 WIB</span>
-                                </div>
-                              </div>
-                            </div>
+                        {/* Grid elements simulating Jakarta traffic map in background */}
+                        <div className="absolute inset-0 z-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, #2d9f6c 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+                        
+                        {/* Custom big glowing play button */}
+                        <div className="relative z-10 w-20 h-20 rounded-full bg-[#df8820] text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-[#2d9f6c] transition-all duration-300 animate-pulse">
+                          <PlayCircle className="w-12 h-12 stroke-[1.5]" />
+                        </div>
+                        
+                        <div className="relative z-10 space-y-1.5 mt-5">
+                          <p className="text-white font-extrabold text-sm md:text-base tracking-tight leading-none group-hover:text-[#fff4e6] transition-colors">
+                            Putar Demo Walkthrough SIGAP
+                          </p>
+                          <p className="text-zinc-400 text-[10px] md:text-xs font-semibold">
+                            Durasi: 1:12 • Kualitas Ultra-HD • Sound Terintegrasi
+                          </p>
+                        </div>
 
-                            <button 
-                              onClick={() => setAppScreen("route")}
-                              className="w-full py-2.5 bg-[#2d9f6c] hover:bg-[#24855a] text-white text-[10px] font-extrabold rounded-xl shadow-md transition-colors text-center uppercase tracking-wide cursor-pointer"
-                            >
-                              Mulai Perjalanan
-                            </button>
-                          </div>
-                        )}
-
-                        {/* SCREEN 2: ROUTE NAVIGATION ACTIVE */}
-                        {appScreen === "route" && (
-                          <div className="flex flex-col gap-2.5 h-full justify-between">
-                            <div className="space-y-2">
-                              <div className="bg-[#ebf7f2] border border-[#2d9f6c]/20 p-2.5 rounded-xl flex items-center gap-2">
-                                <span className="relative flex h-1.5 w-1.5 shrink-0">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2d9f6c] opacity-75" />
-                                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2d9f6c]" />
-                                </span>
-                                <p className="text-[8.5px] font-extrabold text-[#2d9f6c] uppercase tracking-wide">Rute AI Aktif</p>
-                              </div>
-
-                              <div className="bg-white border border-zinc-200 p-2.5 rounded-xl shadow-xs">
-                                <p className="text-[7.5px] font-bold text-zinc-400 uppercase tracking-wider">Tujuan Berikutnya</p>
-                                <p className="font-extrabold text-[10px] text-zinc-800 leading-tight mt-0.5">TPA Bantar Gebang</p>
-                                <div className="w-full h-1 bg-zinc-100 rounded-full mt-2.5 overflow-hidden">
-                                  <div className="h-full bg-gradient-to-r from-[#2d9f6c] to-[#4ade80]" style={{ width: "45%" }} />
-                                </div>
-                                <span className="text-[7.5px] text-zinc-400 font-semibold block mt-1">Estimasi tiba: 32 m (14.2 km)</span>
-                              </div>
-
-                              <div className="bg-white border border-zinc-200 p-2.5 rounded-xl shadow-xs space-y-1.5">
-                                <span className="text-[7.5px] font-bold text-zinc-400 uppercase tracking-wider block">Daftar Tugas</span>
-                                <div className="space-y-1">
-                                  {["Muat Sampah di TPS C (8.5T)", "Timbang Muatan", "Perjalanan ke Bantar Gebang"].map((t, idx) => (
-                                    <div key={idx} className="flex items-center gap-1.5 text-[8.5px] text-zinc-600">
-                                      <CheckCircle2 className={`w-3.5 h-3.5 ${idx < 2 ? "text-[#2d9f6c] fill-[#2d9f6c]/10" : "text-zinc-300"}`} />
-                                      <span className={idx < 2 ? "line-through text-zinc-400 font-medium" : "font-semibold"}>{t}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-1.5 shrink-0">
-                              <button 
-                                onClick={() => setAppScreen("report")}
-                                className="py-2 border border-red-200 hover:bg-red-50 text-red-500 text-[9px] font-extrabold rounded-lg text-center cursor-pointer uppercase"
-                              >
-                                Lapor Kendala
-                              </button>
-                              <button 
-                                onClick={() => setAppScreen("success")}
-                                className="py-2 bg-[#2d9f6c] hover:bg-[#24855a] text-white text-[9px] font-extrabold rounded-lg text-center shadow-xs cursor-pointer uppercase"
-                              >
-                                Tiba di TPA
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* SCREEN 3: REPORT INCIDENT */}
-                        {appScreen === "report" && (
-                          <div className="flex flex-col gap-2.5 h-full justify-between">
-                            <div className="space-y-2">
-                              <h6 className="font-extrabold text-[11px] text-zinc-700 block">Laporkan Kendala Rute</h6>
-                              <p className="text-[8px] text-zinc-400 font-semibold leading-tight">Pilih jenis kendala yang Anda hadapi untuk respons cepat dari dispatcher.</p>
-                              
-                              <div className="space-y-1.5 pt-1.5">
-                                {[
-                                  { id: "macet", label: "Macet Parah", color: "border-yellow-200 text-yellow-600 bg-yellow-50" },
-                                  { id: "ban-bocor", label: "Ban Bocor", color: "border-red-200 text-red-500 bg-red-50" },
-                                  { id: "mesin-mogok", label: "Mesin Mogok", color: "border-red-200 text-red-500 bg-red-50" }
-                                ].map((inc) => (
-                                  <button
-                                    key={inc.id}
-                                    onClick={() => setReportedIncident(inc.label)}
-                                    className={`w-full py-2 px-3 border rounded-xl text-left text-[9px] font-extrabold cursor-pointer transition-all ${
-                                      reportedIncident === inc.label 
-                                        ? "ring-2 ring-zinc-750 bg-white" 
-                                        : inc.color
-                                    }`}
-                                  >
-                                    {inc.label}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-1.5 shrink-0">
-                              <button 
-                                onClick={() => setAppScreen("route")}
-                                className="py-2 border border-zinc-200 text-zinc-500 text-[9px] font-extrabold rounded-lg text-center cursor-pointer"
-                              >
-                                Batal
-                              </button>
-                              <button 
-                                onClick={() => {
-                                  if (reportedIncident) {
-                                    setAppScreen("success-report");
-                                  } else {
-                                    alert("Pilih jenis kendala terlebih dahulu");
-                                  }
-                                }}
-                                className="py-2 bg-red-500 hover:bg-red-600 text-white text-[9px] font-extrabold rounded-lg text-center shadow-xs cursor-pointer uppercase"
-                              >
-                                Kirim Laporan
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* SCREEN 4: SUCCESS REPORTED SCREEN */}
-                        {appScreen === "success-report" && (
-                          <div className="flex flex-col items-center justify-center gap-3.5 h-full py-6 text-center">
-                            <div className="w-11 h-11 bg-red-50 text-red-500 rounded-full border border-red-100 flex items-center justify-center shadow-xs animate-bounce">
-                              <AlertTriangle className="w-6 h-6 animate-pulse" />
-                            </div>
-                            <div>
-                              <h6 className="font-extrabold text-[12px] text-zinc-800 leading-tight">Laporan Terkirim!</h6>
-                              <p className="text-[8px] text-zinc-400 font-semibold max-w-[150px] mx-auto mt-1 leading-normal">
-                                Kendala &rdquo;<strong className="text-zinc-700 font-extrabold">{reportedIncident}</strong>&rdquo; berhasil dilaporkan. Dispatcher sedang memproses bantuan.
-                              </p>
-                            </div>
-                            <button 
-                              onClick={() => {
-                                setAppScreen("route");
-                                setReportedIncident(null);
-                              }}
-                              className="px-4 py-2 border border-zinc-200 text-zinc-600 text-[8.5px] font-extrabold rounded-lg shadow-xs hover:bg-zinc-100 mt-2 transition-colors cursor-pointer uppercase"
-                            >
-                              Kembali ke Rute
-                            </button>
-                          </div>
-                        )}
-
-                        {/* SCREEN 5: SUCCESS COMPLETED SCREEN */}
-                        {appScreen === "success" && (
-                          <div className="flex flex-col items-center justify-center gap-3.5 h-full py-6 text-center">
-                            <div className="w-11 h-11 bg-[#ebf7f2] text-[#2d9f6c] rounded-full border border-[#2d9f6c]/20 flex items-center justify-center shadow-xs animate-scale-in">
-                              <CheckCircle2 className="w-6 h-6 fill-[#2d9f6c]/10" />
-                            </div>
-                            <div>
-                              <h6 className="font-extrabold text-[12px] text-zinc-800 leading-tight">Tugas Selesai!</h6>
-                              <p className="text-[8px] text-zinc-400 font-semibold max-w-[150px] mx-auto mt-1 leading-normal">
-                                8.5 Ton muatan terkirim dengan selamat di TPA Bantar Gebang. Selamat atas kontribusi Anda!
-                              </p>
-                            </div>
-                            <button 
-                              onClick={() => setAppScreen("home")}
-                              className="px-4 py-2 bg-[#2d9f6c] text-white text-[8.5px] font-extrabold rounded-lg shadow-sm hover:bg-[#24855a] mt-2 transition-colors cursor-pointer uppercase tracking-wider"
-                            >
-                              Ambil Tugas Baru
-                            </button>
-                          </div>
-                        )}
+                        {/* Left bottom simulated badge */}
+                        <div className="absolute bottom-4 left-4 bg-zinc-900/80 border border-zinc-800 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1.5 z-10">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#2d9f6c] animate-pulse" />
+                          <span className="text-[9px] text-zinc-300 font-extrabold uppercase tracking-wide">Command Center DLH</span>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      // Active video / simulation screen
+                      <div className="absolute inset-0 flex flex-col justify-between p-4 z-10 text-white select-none">
+                        {/* Embedded Iframe Player (YouTube Walkthrough Player) */}
+                        <iframe 
+                          src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=1&controls=1&rel=0" 
+                          title="SIGAP DKI Jakarta Walkthrough Video"
+                          className="absolute inset-0 w-full h-full border-none z-0 rounded-2xl"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                        
+                        {/* Custom Player Controls overlay for high-fidelity feel */}
+                        <div className="absolute bottom-3 right-3 bg-zinc-950/80 border border-zinc-800 backdrop-blur-md px-3 py-1 rounded-md flex items-center gap-2 z-10">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConsoleVideoPlaying(false);
+                            }}
+                            className="text-[9px] text-zinc-300 hover:text-white font-extrabold uppercase tracking-wide cursor-pointer flex items-center gap-1"
+                          >
+                            <span>🔄 Ulangi Panduan</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -900,26 +1140,26 @@ export default function LandingPage() {
                   </div>
                 )}
 
-                {/* DYNAMIC CONTENT FOR APP */}
-                {activeDemoTab === "app" && (
-                  <div className="space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-purple-50 text-purple-500 text-[10px] font-extrabold rounded-full uppercase tracking-wider">
-                      Driver Mobile App
+                {/* DYNAMIC CONTENT FOR VIDEO WALKTHROUGH */}
+                {activeDemoTab === "walkthrough" && (
+                  <div className="space-y-6 animate-fade-in">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#fff4e6] text-[#df8820] text-[10px] font-extrabold rounded-full uppercase tracking-wider">
+                       Video Walkthrough
                     </div>
                     <h3 className="font-headline text-3xl sm:text-[34px] font-extrabold tracking-tight text-zinc-900 leading-tight">
-                      Sinergi kuat pengemudi & <span className="text-purple-500">Dispatcher</span>
+                      Panduan ekosistem cerdas <span className="text-[#df8820]">SIGAP</span>
                     </h3>
                     <p className="text-zinc-500 leading-relaxed text-[14px]">
-                      Driver dibekali aplikasi praktis untuk panduan navigasi AI, absensi, hingga pelaporan cepat anomali ban bocor atau jalan tertutup langsung dari lokasi.
+                      Tonton bagaimana platform terintegrasi kami memantau pergerakan truk sampah, mengoptimalkan rute armada menggunakan kecerdasan buatan, dan mempertemukan aksi supir dengan dispatcher DLH secara real-time.
                     </p>
                     <div className="space-y-3.5 border-l-2 border-zinc-200 pl-4 py-1">
                       <div className="flex items-start gap-3">
-                        <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                        <p className="text-[13px] text-zinc-600 font-semibold">Pelaporan kendala terintegrasi &lt; 3 detik</p>
+                        <CheckCircle2 className="w-4 h-4 text-[#df8820] shrink-0 mt-0.5" />
+                        <p className="text-[13px] text-zinc-600 font-semibold">Gambaran umum visualisasi dashboard & pemetaan GPS</p>
                       </div>
                       <div className="flex items-start gap-3">
-                        <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                        <p className="text-[13px] text-zinc-600 font-semibold">Absensi online berbasis koordinat GPS</p>
+                        <CheckCircle2 className="w-4 h-4 text-[#df8820] shrink-0 mt-0.5" />
+                        <p className="text-[13px] text-zinc-600 font-semibold">Demo alur kerja supir & deteksi jembatan timbang otomatis</p>
                       </div>
                     </div>
                   </div>
@@ -1054,38 +1294,19 @@ export default function LandingPage() {
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-24 h-1 bg-zinc-900 rounded-full z-50" />
               </div>
 
-              {/* App Store / Google Play Badge Rows */}
-              <div className="flex flex-wrap justify-center gap-3 w-full max-w-sm pt-2">
-                {/* Apple App Store */}
-                <div className="flex items-center gap-2.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl cursor-pointer border border-zinc-800 transition-colors shadow-md shrink-0">
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,22C14.32,22.05 13.89,21.24 12.37,21.24C10.84,21.24 10.37,21.97 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.1,16.67C20.08,16.74 19.67,18.11 18.71,19.5M15.97,4.17C16.63,3.37 17.07,2.28 16.95,1C16,1.04 14.9,1.6 14.24,2.38C13.68,3.04 13.19,4.14 13.34,5.39C14.39,5.47 15.4,4.88 15.97,4.17Z" />
-                  </svg>
-                  <div className="text-left leading-none">
-                    <span className="text-[7.5px] uppercase tracking-wider text-zinc-400 font-semibold block">Download on the</span>
-                    <span className="text-xs font-extrabold tracking-tight mt-0.5 block">App Store</span>
-                  </div>
-                </div>
-                {/* Google Play Store */}
-                <div className="flex items-center gap-2.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl cursor-pointer border border-zinc-800 transition-colors shadow-md shrink-0">
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3,5.27V18.73L16.55,12L3,5.27M17.87,11.33L19.34,12L17.87,12.67L5.56,18.73L16.55,12L5.56,5.27L17.87,11.33M20,11L18.5,12L20,13V11Z" />
-                  </svg>
-                  <div className="text-left leading-none">
-                    <span className="text-[7.5px] uppercase tracking-wider text-zinc-400 font-semibold block">GET IT ON</span>
-                    <span className="text-xs font-extrabold tracking-tight mt-0.5 block">Google Play</span>
-                  </div>
-                </div>
+              {/* Premium App Status Badge for Competition */}
+              <div className="flex items-center gap-2.5 px-5 py-3 bg-[#ebf7f2] border border-[#2d9f6c]/20 text-[#2d9f6c] rounded-2xl shadow-xs mt-4">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2d9f6c] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2d9f6c]" />
+                </span>
+                <span className="text-[10px] font-extrabold tracking-wider uppercase">Aplikasi Aktif • Penggunaan Internal DLH DKI</span>
               </div>
 
             </div>
 
             {/* Right Column: Explanations and App Features (Span 7) */}
             <div className={`lg:col-span-7 space-y-7 text-left ${revealClass(mobileAppReveal.visible, "left", 200)}`}>
-              
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ebf7f2] text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em]">
-                <Smartphone className="w-3.5 h-3.5" /> Aplikasi Lapangan Supir
-              </div>
               
               <h2 className="font-headline text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] text-zinc-900 leading-[1.1]">
                 Sinergi sempurna supir di lapangan
@@ -1137,10 +1358,18 @@ export default function LandingPage() {
               </div>
 
               <div className="flex flex-wrap gap-4 pt-6 border-t border-zinc-100">
-                <button className="flex items-center gap-2.5 px-8 py-4 bg-[#2d9f6c] text-white font-bold rounded-2xl hover:bg-[#24855a] transition-all duration-300 text-[13px] shadow-lg shadow-[#2d9f6c]/20">
+                <button className="flex items-center gap-2.5 px-8 py-4 bg-[#2d9f6c] text-white font-bold rounded-2xl hover:bg-[#24855a] transition-all duration-300 text-[13px] shadow-lg shadow-[#2d9f6c]/20 cursor-pointer">
                   Unduh Panduan Supir (PDF) <CheckCircle2 className="w-4 h-4" />
                 </button>
-                <button className="flex items-center gap-2.5 px-8 py-4 bg-white text-zinc-700 font-bold rounded-2xl border border-zinc-200 hover:border-zinc-350 hover:bg-zinc-50 transition-colors text-[13px] shadow-sm">
+                <button 
+                  onClick={() => {
+                    setActiveDemoTab("walkthrough");
+                    setConsoleVideoPlaying(false);
+                    const el = document.getElementById("tech");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="flex items-center gap-2.5 px-8 py-4 bg-white text-zinc-700 font-bold rounded-2xl border border-zinc-200 hover:border-zinc-350 hover:bg-zinc-50 transition-colors text-[13px] shadow-sm cursor-pointer"
+                >
                   Tonton Video Demo
                 </button>
               </div>
@@ -1156,9 +1385,6 @@ export default function LandingPage() {
         <section id="impact" ref={impactReveal.ref} className="py-28 px-6 md:px-12 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className={`text-center mb-20 max-w-2xl mx-auto ${revealClass(impactReveal.visible, "up")}`}>
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#fff4e6] text-[#df8820] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6">
-                <TrendingUp className="w-3.5 h-3.5" /> Transformasi Nyata
-              </div>
               <h2 className="font-headline text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] text-zinc-900 mb-5 leading-[1.1]">
                 Dari konvensional
                 <br />
@@ -1217,57 +1443,291 @@ export default function LandingPage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            TESTIMONIALS — Soft green background
+            COMPETITIVE ADVANTAGES — Comparison + Morphing Deck
         ══════════════════════════════════════════════════════════════ */}
-        <section id="testimonials" ref={testimonialReveal.ref} className="py-28 px-6 md:px-12 bg-gradient-to-br from-[#f0faf5] to-[#f5fdf9]">
-          <div className="max-w-4xl mx-auto">
-            <div className={`text-center mb-16 ${revealClass(testimonialReveal.visible, "up")}`}>
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#2d9f6c] text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mb-6 border border-[#2d9f6c]/15 shadow-sm">
-                <Star className="w-3.5 h-3.5 fill-[#2d9f6c]" /> Testimoni
-              </div>
-              <h2 className="font-headline text-4xl sm:text-5xl font-extrabold tracking-[-0.03em] text-zinc-900 leading-[1.1]">
-                Dipercaya para
+        <section id="advantages" ref={advantagesReveal.ref} className="py-28 px-6 md:px-12 bg-white">
+          <div className="max-w-7xl mx-auto">
+            {/* ─── Header ─── */}
+            <div className="text-center mb-20 max-w-3xl mx-auto flex flex-col items-center">
+              <h2 
+                className={`${revealClass(advantagesReveal.visible, "up")} font-headline text-[2.5rem] sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-zinc-900 leading-[1.1] mb-6`}
+                style={revealStyle(150)}
+              >
+                Mengapa <span className="text-gradient-green">memilih</span>
                 <br />
-                <span className="text-gradient-green">profesional lapangan</span>
+                <span className="text-gradient-orange">SIGAP?</span>
               </h2>
+              <p 
+                className={`${revealClass(advantagesReveal.visible, "up")} text-zinc-500 text-lg leading-relaxed max-w-2xl mx-auto`}
+                style={revealStyle(300)}
+              >
+                Tiga keunggulan utama yang mendisrupsi sistem manajemen kebersihan konvensional secara menyeluruh di DKI Jakarta.
+              </p>
             </div>
 
-            <div className={`bg-white rounded-[2rem] p-10 sm:p-14 border border-zinc-100 relative overflow-hidden min-h-[300px] shadow-lg ${revealClass(testimonialReveal.visible, "scale", 200)}`}>
-              <div className="absolute top-4 right-8 font-headline text-zinc-100 font-extrabold text-[160px] leading-none select-none pointer-events-none">&ldquo;</div>
+            {/* ─── 2-Column Split Feature Deck ─── */}
+            <div className="grid lg:grid-cols-12 gap-10 items-stretch mt-12">
+              
+              {/* Left Column: Navigation Cards (Span 5) */}
+              <div className="lg:col-span-5 flex flex-col gap-4 justify-center">
+                {[
+                  {
+                    id: 0,
+                    icon: Brain,
+                    title: "AI Route Optimizer",
+                    desc: "Algoritma machine learning bypass kemacetan otomatis.",
+                    tag: "Efisiensi +35%",
+                    color: "border-[#df8820]/30 text-[#df8820] bg-[#fff4e6]",
+                    baseColor: "text-[#df8820]",
+                    activeCls: "border-[#df8820] bg-zinc-50/50 shadow-lg shadow-[#df8820]/5",
+                    delay: 350,
+                  },
+                  {
+                    id: 1,
+                    icon: MapPin,
+                    title: "Monitoring Real-time 24/7",
+                    desc: "Pantau posisi armada di peta dengan update tiap 4 detik.",
+                    tag: "Akurasi Sub-Meter",
+                    color: "border-[#2d9f6c]/30 text-[#2d9f6c] bg-[#ebf7f2]",
+                    baseColor: "text-[#2d9f6c]",
+                    activeCls: "border-[#2d9f6c] bg-zinc-50/50 shadow-lg shadow-[#2d9f6c]/5",
+                    delay: 500,
+                  },
+                  {
+                    id: 2,
+                    icon: AlertTriangle,
+                    title: "Deteksi Pelanggaran Proaktif",
+                    desc: "AI deteksi otomatis deviasi rute dan batas kecepatan.",
+                    tag: "Proteksi SOS",
+                    color: "border-red-200 text-red-600 bg-red-50",
+                    baseColor: "text-red-600",
+                    activeCls: "border-red-500 bg-zinc-50/50 shadow-lg shadow-red-500/5",
+                    delay: 650,
+                  },
+                ].map((item) => {
+                  const IconComp = item.icon;
+                  const isActive = activeAdvantageSlide === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveAdvantageSlide(item.id)}
+                      className={`${revealClass(advantagesReveal.visible, "up")} w-full text-left p-6 rounded-3xl border transition-all duration-300 flex items-start gap-4 cursor-pointer relative overflow-hidden group ${
+                        isActive ? item.activeCls : "border-zinc-100 bg-white hover:border-zinc-300 hover:shadow-md"
+                      }`}
+                      style={revealStyle(item.delay)}
+                    >
+                      <div className={`p-3 rounded-2xl shrink-0 ${item.color}`}>
+                        <IconComp className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0 pr-4">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-headline font-extrabold text-[16px] text-zinc-950 block leading-tight">{item.title}</span>
+                          <span className={`text-[8px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${item.color} border border-current/10`}>
+                            {item.tag}
+                          </span>
+                        </div>
+                        <p className="text-[12px] text-zinc-500 font-semibold mt-2.5 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                      <ChevronRight className={`w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                        isActive ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-50"
+                      } ${item.baseColor}`} />
+                    </button>
+                  );
+                })}
+              </div>
 
-              {TESTIMONIALS.map((t, i) => (
-                <div
-                  key={i}
-                  className={`transition-all duration-700 ease-in-out ${i === activeTestimonial ? "opacity-100 translate-y-0 relative" : "opacity-0 translate-y-6 absolute top-10 left-10 right-10 pointer-events-none"}`}
-                >
-                  <div className="flex gap-1 mb-8">
-                    {[...Array(5)].map((_, j) => <Star key={j} className="w-5 h-5 fill-[#df8820] text-[#df8820]" />)}
-                  </div>
-                  <p className="font-headline text-2xl sm:text-[28px] font-semibold text-zinc-700 leading-[1.6] mb-10 max-w-2xl tracking-tight">
-                    &ldquo;{t.text}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2d9f6c] to-[#4ade80] flex items-center justify-center text-white font-headline font-extrabold text-[15px] shadow-lg shadow-[#2d9f6c]/20">
-                      {t.name.split(" ").map(w => w[0]).slice(0, 2).join("")}
+              {/* Right Column: Visual Showcase Card Canvas (Span 7) */}
+              <div 
+                className={`${revealClass(advantagesReveal.visible, "scale")} lg:col-span-7 bg-zinc-50/50 border border-zinc-100 rounded-[2.5rem] p-6 flex flex-col justify-between shadow-inner min-h-[420px] relative overflow-hidden`}
+                style={revealStyle(600)}
+              >
+                
+                {/* ─── SLIDE 0: AI ROUTE DETAILED UI ─── */}
+                {activeAdvantageSlide === 0 && (
+                  <div className="flex-1 flex flex-col justify-between animate-fade-in z-10 w-full h-full">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-zinc-200/50 pb-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#df8820] animate-pulse" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 font-mono">AI Router Simulator</span>
+                      </div>
+                      <span className="text-[9px] font-extrabold text-[#df8820] bg-[#fff4e6] px-3 py-1 rounded-full border border-[#df8820]/15">
+                        Rute Optimal AI Aktif
+                      </span>
                     </div>
-                    <div>
-                      <p className="font-headline font-extrabold text-zinc-900 tracking-tight text-[15px]">{t.name}</p>
-                      <p className="text-[13px] text-zinc-500 font-medium">{t.role} — {t.org}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
 
-              <div className="flex gap-2 mt-10 pt-8 border-t border-zinc-100">
-                {TESTIMONIALS.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveTestimonial(i)}
-                    className={`h-1.5 rounded-full transition-all duration-500 ${i === activeTestimonial ? "w-10 bg-[#2d9f6c]" : "w-3 bg-zinc-200 hover:bg-zinc-300"}`}
-                  />
-                ))}
+                    {/* Graphic Map Showcase */}
+                    <div className="flex-1 bg-white rounded-2xl border border-zinc-200/60 p-4 shadow-sm flex flex-col justify-between relative overflow-hidden min-h-[220px]">
+                      {/* Grid background */}
+                      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #df8820 1px, transparent 1px)", backgroundSize: "16px 16px" }} />
+                      
+                      <div className="flex justify-between items-start gap-4">
+                        <div>
+                          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider leading-none">ARMADA DITARGETKAN</p>
+                          <p className="text-[15px] font-headline font-extrabold text-zinc-950 mt-1 font-mono">B-1234-DLH</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider leading-none">AI ACCURACY</p>
+                          <p className="text-[15px] font-headline font-extrabold text-[#2d9f6c] mt-1 font-mono">98.4% Match</p>
+                        </div>
+                      </div>
+
+                      {/* Stylized Visual Route Comparison */}
+                      <div className="py-4 space-y-3 relative z-10 flex-1 flex flex-col justify-center text-left">
+                        {/* Congested Route Bar */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-bold text-zinc-400 w-16 shrink-0 text-right">Rute Normal</span>
+                          <div className="flex-1 h-3 bg-red-50 rounded-full border border-red-200/30 overflow-hidden relative">
+                            <div className="h-full bg-red-400 rounded-full" style={{ width: "100%" }} />
+                            <span className="absolute inset-0 flex items-center justify-end pr-3 text-[8px] font-bold text-red-700 leading-none">Jl. Sudirman (Macet Parah) • 28.9 km</span>
+                          </div>
+                        </div>
+                        {/* Optimized AI Route Bar */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-bold text-[#df8820] w-16 shrink-0 text-right">AI Rute Cerdas</span>
+                          <div className="flex-1 h-6 bg-[#ebf7f2] rounded-full border border-[#2d9f6c]/20 overflow-hidden relative">
+                            <div className="h-full bg-gradient-to-r from-[#2d9f6c] to-[#4ade80] rounded-full" style={{ width: "77%" }} />
+                            <span className="absolute inset-0 flex items-center justify-between px-3 text-[9px] font-extrabold text-[#2d9f6c] uppercase tracking-wider leading-none">
+                              <span>Optimal AI</span>
+                              <span>Bypass Tol Slipi • 22.5 km</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Small Bottom Stats Row */}
+                      <div className="grid grid-cols-3 gap-2 text-center text-[10px] font-bold border-t border-zinc-100 pt-3">
+                        <div className="bg-zinc-50 rounded-lg p-2 border border-zinc-100">
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider block">WAKTU EKONOMIS</span>
+                          <span className="text-zinc-800 text-[11px] font-extrabold">-30% Durasi</span>
+                        </div>
+                        <div className="bg-zinc-50 rounded-lg p-2 border border-zinc-100">
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider block">BBM TEREFISIEN</span>
+                          <span className="text-[#2d9f6c] text-[11px] font-extrabold">+28.5% Hemat</span>
+                        </div>
+                        <div className="bg-zinc-50 rounded-lg p-2 border border-zinc-100">
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider block">JARAK TEMPUH</span>
+                          <span className="text-zinc-800 text-[11px] font-extrabold">-6.4 km</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── SLIDE 1: GPS TRACKING REAL-TIME UI ─── */}
+                {activeAdvantageSlide === 1 && (
+                  <div className="flex-1 flex flex-col justify-between animate-fade-in z-10 w-full h-full">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-zinc-200/50 pb-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#2d9f6c] animate-pulse" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 font-mono">Live GPS Telemetry</span>
+                      </div>
+                      <span className="text-[9px] font-extrabold text-[#2d9f6c] bg-[#ebf7f2] px-3 py-1 rounded-full border border-[#2d9f6c]/15 flex items-center gap-1">
+                        <span className="w-1 h-1 bg-[#2d9f6c] rounded-full animate-ping" />
+                        Update 4 Detik
+                      </span>
+                    </div>
+
+                    {/* Satellite Active Fleet List */}
+                    <div className="flex-1 bg-white rounded-2xl border border-zinc-200/60 p-4 shadow-sm flex flex-col justify-between min-h-[220px]">
+                      <div className="space-y-3 flex-1 flex flex-col justify-center">
+                        {[
+                          { plat: "B-5566-DLH", name: "Eko Purjianto", zone: "Zone C → Bantar Gebang", speed: "45 km/h", status: "ON ROUTE", clr: "text-[#2d9f6c] bg-[#ebf7f2]" },
+                          { plat: "B-1234-DLH", name: "Bambang Pamungkas", zone: "Zone A → Bantar Gebang", speed: "48 km/h", status: "ON ROUTE", clr: "text-[#2d9f6c] bg-[#ebf7f2]" },
+                          { plat: "B-9988-DLH", name: "Budi Sudarsono", zone: "Zone B → TPS Menteng", speed: "0 km/h (Idle)", status: "IDLE", clr: "text-[#df8820] bg-[#fff4e6]" },
+                        ].map((row, i) => (
+                          <div key={i} className="flex items-center justify-between p-3 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-zinc-200 hover:shadow-sm transition-all text-left">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white shrink-0 font-extrabold text-[9px] font-mono">
+                                TRK
+                              </div>
+                              <div>
+                                <span className="text-[11px] font-extrabold text-zinc-950 font-mono block leading-none">{row.plat}</span>
+                                <span className="text-[9px] text-zinc-400 font-bold block mt-1 leading-none">{row.name} • {row.zone}</span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[11px] font-extrabold text-zinc-700 font-mono block leading-none">{row.speed}</span>
+                              <span className={`text-[8px] font-extrabold px-2 py-0.5 rounded-full mt-1.5 inline-block uppercase tracking-wider ${row.clr} border border-current/10`}>
+                                {row.status}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Small Bottom Stats Row */}
+                      <div className="grid grid-cols-2 gap-2 text-center text-[10px] font-bold border-t border-zinc-100 pt-3">
+                        <div className="bg-zinc-50 rounded-lg p-2 border border-zinc-100">
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider block">LATENSI TRANSMISI</span>
+                          <span className="text-[#2d9f6c] text-[11px] font-extrabold">0.3s Delay (Sangat Baik)</span>
+                        </div>
+                        <div className="bg-zinc-50 rounded-lg p-2 border border-zinc-100">
+                          <span className="text-[8px] text-zinc-400 uppercase tracking-wider block">SATELIT TERKONEKSI</span>
+                          <span className="text-zinc-800 text-[11px] font-extrabold">24 Satelit GPS Aktif</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── SLIDE 2: PROACTIVE ALERT WARNING UI ─── */}
+                {activeAdvantageSlide === 2 && (
+                  <div className="flex-1 flex flex-col justify-between animate-fade-in z-10 w-full h-full">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-zinc-200/50 pb-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 font-mono">Proactive Alert Center</span>
+                      </div>
+                      <span className="text-[9px] font-extrabold text-red-600 bg-red-50 px-3 py-1 rounded-full border border-red-200/40">
+                        1 Bahaya Terdeteksi
+                      </span>
+                    </div>
+
+                    {/* Massive Warning Card */}
+                    <div className="flex-1 bg-white rounded-2xl border border-red-200/50 p-5 shadow-lg shadow-red-500/5 flex flex-col justify-between min-h-[220px] relative overflow-hidden text-left">
+                      {/* Pulse shadow overlay */}
+                      <div className="absolute inset-0 bg-red-500/[0.01] animate-pulse pointer-events-none" />
+
+                      <div className="flex gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center shrink-0 text-red-600 animate-pulse">
+                          <AlertTriangle className="w-6 h-6 text-red-600" />
+                        </div>
+                        <div className="flex-1">
+                          <span className="text-[9px] text-red-500 font-extrabold uppercase tracking-wider bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">KECEPATAN BERLEBIH</span>
+                          <p className="text-[15px] font-headline font-extrabold text-zinc-950 mt-1.5">Batas Kecepatan Maksimum Dilanggar!</p>
+                          <p className="text-[12px] text-zinc-500 font-semibold mt-1 leading-relaxed">
+                            Armada <strong className="text-zinc-700 font-extrabold">B-7722-DLH</strong> (Pengemudi: Gendut Doni) terdeteksi melaju di kecepatan <span className="text-red-600 font-extrabold font-mono">85 km/jam</span> pada zona Tol Slipi (Batas Maks: 60 km/jam).
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Action Box */}
+                      <div className="mt-4 flex gap-2 border-t border-zinc-100 pt-4">
+                        <button 
+                          onClick={() => alert("Simulasi: Peringatan tegas terkirim via Driver App & WhatsApp!")}
+                          className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-[11px] rounded-xl transition-all uppercase tracking-wider cursor-pointer shadow-md shadow-red-600/25 active:scale-95"
+                        >
+                          Kirim Peringatan
+                        </button>
+                        <button 
+                          onClick={() => alert("Menghubungi nomor telepon terdaftar Gendut Doni (+62-812-3456-7890)...")}
+                          className="px-4 py-2.5 bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                        >
+                          <Phone className="w-3.5 h-3.5" /> Call Driver
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
+            
           </div>
         </section>
 
@@ -1283,9 +1743,6 @@ export default function LandingPage() {
           </div>
 
           <div className="max-w-3xl mx-auto text-center relative z-10 space-y-10">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 border border-white/20 text-white text-[10px] font-extrabold rounded-full uppercase tracking-[0.2em] mx-auto">
-              <TreePine className="w-3.5 h-3.5" /> Jakarta Bersih
-            </div>
             <h2 className="font-headline text-5xl sm:text-6xl font-extrabold text-white leading-[1.08] tracking-[-0.03em]">
               Siap menuju
               <br />
@@ -1318,7 +1775,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-14 border-b border-zinc-100">
             <div>
               <div className="flex items-center gap-3 mb-5">
-                <Image src="/logo.webp" alt="SIGAP Logo" width={40} height={40} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/15" />
+                <Image src="/logo.webp" alt="SIGAP Logo" width={40} height={40} className="rounded-2xl shadow-lg shadow-[#2d9f6c]/15" loading="eager" />
                 <span className="font-headline font-extrabold text-xl tracking-tight text-zinc-900">SIGAP</span>
               </div>
               <p className="text-zinc-500 text-[13px] leading-relaxed">
