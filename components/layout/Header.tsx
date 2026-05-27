@@ -41,12 +41,12 @@ export default function Header({ activeTab, onMenuClick }: HeaderProps) {
           <Image
             src="/logo.webp"
             alt="SIGAP Logo"
-            width={64}
-            height={64}
-            className="object-contain"
+            width={40}
+            height={40}
+            className="object-contain w-10 h-10"
             loading="eager"
           />
-          <h2 className="text-xl font-bold text-zinc-950 font-sans tracking-tight">
+          <h2 className="text-sm sm:text-base md:text-xl font-bold text-zinc-950 font-sans tracking-tight truncate max-w-[120px] sm:max-w-none">
             {getTitle()}
           </h2>
         </div>
