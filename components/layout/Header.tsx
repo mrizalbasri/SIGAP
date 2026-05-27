@@ -6,9 +6,10 @@ import { Search, Clock, Bell, Menu } from "lucide-react";
 
 interface HeaderProps {
   activeTab: string;
+  onMenuClick?: () => void;
 }
 
-export default function Header({ activeTab }: HeaderProps) {
+export default function Header({ activeTab, onMenuClick }: HeaderProps) {
   const getTitle = () => {
     switch (activeTab) {
       case "dashboard":
@@ -29,8 +30,11 @@ export default function Header({ activeTab }: HeaderProps) {
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-zinc-100 shadow-sm fixed top-0 right-0 w-full md:w-[calc(100%-280px)] h-16 z-40 flex items-center justify-between px-6 md:px-8 transition-all duration-300">
       <div className="flex items-center gap-4">
-        {/* Mobile menu toggle placeholder */}
-        <button className="md:hidden p-1 text-zinc-700 hover:bg-zinc-50 rounded-lg">
+        {/* Mobile menu toggle */}
+        <button 
+          onClick={onMenuClick}
+          className="md:hidden p-1 text-zinc-700 hover:bg-zinc-50 rounded-lg"
+        >
           <Menu className="w-6 h-6" />
         </button>
         <div className="flex items-center gap-3">
@@ -40,6 +44,7 @@ export default function Header({ activeTab }: HeaderProps) {
             width={64}
             height={64}
             className="object-contain"
+            loading="eager"
           />
           <h2 className="text-xl font-bold text-zinc-950 font-sans tracking-tight">
             {getTitle()}
