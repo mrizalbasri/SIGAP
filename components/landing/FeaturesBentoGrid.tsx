@@ -22,7 +22,7 @@ interface Feature {
 interface FeaturesBentoGridProps {
   features: Feature[];
   visible: boolean;
-  revealClass: (visible: boolean, direction: string, delay?: number) => string;
+  revealClass: (visible: boolean, direction: any, delay?: number) => string;
   revealStyle: (delay: number) => React.CSSProperties | undefined;
 }
 
@@ -57,7 +57,7 @@ export default function FeaturesBentoGrid({
           <div
             className={`flex items-center gap-1.5 mt-6 text-[13px] font-bold ${features[0].color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}
           >
-            Pelajari lebih <ChevronRight className="w-4 h-4" />
+            Pelajari Selengkapnya <ChevronRight className="w-4 h-4" />
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function FeaturesBentoGrid({
           <div
             className={`flex items-center gap-1.5 mt-6 text-[13px] font-bold ${features[1].color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}
           >
-            Pelajari lebih <ChevronRight className="w-4 h-4" />
+            Pelajari Selengkapnya <ChevronRight className="w-4 h-4" />
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@ export default function FeaturesBentoGrid({
           <div
             className={`flex items-center gap-1.5 mt-4 text-[12px] font-bold ${features[2].color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}
           >
-            Pelajari lebih <ChevronRight className="w-3.5 h-3.5" />
+            Pelajari Selengkapnya <ChevronRight className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function FeaturesBentoGrid({
           <div
             className={`flex items-center gap-1.5 mt-5 text-[12px] font-bold ${features[3].color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}
           >
-            Pelajari lebih <ChevronRight className="w-3.5 h-3.5" />
+            Pelajari Selengkapnya <ChevronRight className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function FeaturesBentoGrid({
           <div
             className={`flex items-center gap-1.5 mt-5 text-[12px] font-bold ${features[4].color} opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-1`}
           >
-            Pelajari lebih <ChevronRight className="w-3.5 h-3.5" />
+            Pelajari Selengkapnya <ChevronRight className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>

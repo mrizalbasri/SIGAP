@@ -19,6 +19,10 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "SIGAP Command Center — DKI Jakarta",
   description: "Sistem Integrasi Gerak Armada Pintar - Dinas Lingkungan Hidup DKI Jakarta",
+  icons: {
+    icon: "/logo.webp",
+    apple: "/logo.webp",
+  },
 };
 
 export default function RootLayout({

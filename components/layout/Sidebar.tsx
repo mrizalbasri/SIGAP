@@ -43,6 +43,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           width={80}
           height={80}
           className="object-contain"
+          loading="eager"
         />
         <div>
           <h1 className="text-2xl font-black tracking-tight font-sans">
