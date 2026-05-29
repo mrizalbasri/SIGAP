@@ -16,6 +16,7 @@ import { RefreshCw, Wrench, ShieldAlert } from "lucide-react";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { trucks, alerts } = useFleetData();
 
   const renderContent = () => {
@@ -84,12 +85,17 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-zinc-50/50 flex">
       {/* Sidebar Nav */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        isMobileOpen={isSidebarOpen}
+        setIsMobileOpen={setIsSidebarOpen}
+      />
 
       {/* Main Content Area */}
       <div className="flex-1 md:ml-[280px] flex flex-col min-h-screen">
         {/* Header */}
-        <Header activeTab={activeTab} />
+        <Header activeTab={activeTab} onMenuClick={() => setIsSidebarOpen(true)} />
 
         {/* Page Content Canvas */}
         <main className="flex-1 pt-24 px-6 md:px-8 pb-8 flex flex-col gap-6 w-full max-w-[1600px] mx-auto">

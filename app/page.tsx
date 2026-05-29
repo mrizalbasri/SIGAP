@@ -128,6 +128,7 @@ export default function LandingPage() {
 
   // ─── Video Walkthrough Tab State ──────────────────────────────────────────────
   const [consoleVideoPlaying, setConsoleVideoPlaying] = useState(false);
+  const walkthroughVideoRef = useRef<HTMLVideoElement>(null);
 
   // ─── Keunggulan Carousel State ───────────────────────────────────────────────
   const [activeAdvantageSlide, setActiveAdvantageSlide] = useState(0);
@@ -998,11 +999,20 @@ export default function LandingPage() {
 
                 {/* ─── TAB 4: WALKTHROUGH VIDEO ─── */}
                 {activeDemoTab === "walkthrough" && (
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between h-full bg-zinc-950 text-white rounded-2xl overflow-hidden shadow-inner border border-zinc-900">
+                  <div
+                    className="absolute inset-0 p-6 flex flex-col justify-between h-full bg-zinc-950 text-white rounded-2xl overflow-hidden shadow-inner border border-zinc-900"
+                    onMouseLeave={() => {
+                      if (walkthroughVideoRef.current) {
+                        walkthroughVideoRef.current.pause();
+                        walkthroughVideoRef.current.currentTime = 0;
+                      }
+                      setConsoleVideoPlaying(false);
+                    }}
+                  >
                     {!consoleVideoPlaying ? (
                       // Walkthrough Video Cover Image / State
-                      <div 
-                        onClick={() => setConsoleVideoPlaying(true)}
+                      <div
+                        onMouseEnter={() => setConsoleVideoPlaying(true)}
                         className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center cursor-pointer group"
                       >
                         {/* Backdrop city art simulation */}
@@ -1035,13 +1045,26 @@ export default function LandingPage() {
                     ) : (
                       // Active video / simulation screen
                       <div className="absolute inset-0 flex flex-col justify-between p-4 z-10 text-white select-none">
-                        {/* Embedded Iframe Player (YouTube Walkthrough Player) */}
-                        <iframe 
-                          src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=1&controls=1&rel=0" 
+                        {/* Local Walkthrough Video Player */}
+                        <video
+                          ref={walkthroughVideoRef}
+                          src="/videos/walkthrough.mp4"
                           title="SIGAP DKI Jakarta Walkthrough Video"
-                          className="absolute inset-0 w-full h-full border-none z-0 rounded-2xl"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
+                          className="absolute inset-0 w-full h-full z-0 rounded-2xl object-cover"
+                          controls
+                          muted
+                          playsInline
+                          preload="metadata"
+                          onMouseEnter={() => {
+                            walkthroughVideoRef.current?.play();
+                          }}
+                          onMouseLeave={() => {
+                            if (walkthroughVideoRef.current) {
+                              walkthroughVideoRef.current.pause();
+                              walkthroughVideoRef.current.currentTime = 0;
+                            }
+                            setConsoleVideoPlaying(false);
+                          }}
                         />
                         
                         {/* Custom Player Controls overlay for high-fidelity feel */}
@@ -1049,6 +1072,10 @@ export default function LandingPage() {
                           <button 
                             onClick={(e) => {
                               e.stopPropagation();
+                              if (walkthroughVideoRef.current) {
+                                walkthroughVideoRef.current.pause();
+                                walkthroughVideoRef.current.currentTime = 0;
+                              }
                               setConsoleVideoPlaying(false);
                             }}
                             className="text-[9px] text-zinc-300 hover:text-white font-extrabold uppercase tracking-wide cursor-pointer flex items-center gap-1"
